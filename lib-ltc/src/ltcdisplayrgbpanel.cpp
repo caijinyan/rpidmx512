@@ -85,9 +85,9 @@ void LtcDisplayRgbPanel::Print() {
 
 void LtcDisplayRgbPanel::Show(const char *pTimecode, struct TLtcDisplayRgbColours &tColours, struct TLtcDisplayRgbColours &tColoursColons) {
 	m_pRgbPanel->SetColonsOff();
-	m_pRgbPanel->SetColon(':', 1, 0, tColoursColons.nRed, tColoursColons.nGreen, tColoursColons.nBlue);
-	m_pRgbPanel->SetColon(':', 3, 0, tColoursColons.nRed, tColoursColons.nGreen, tColoursColons.nBlue);
-	m_pRgbPanel->SetColon('.', 5, 0, tColoursColons.nRed, tColoursColons.nGreen, tColoursColons.nBlue);
+	m_pRgbPanel->SetColon(pTimecode[LTC_TC_INDEX_COLON_1], 1, 0, tColoursColons.nRed, tColoursColons.nGreen, tColoursColons.nBlue);
+	m_pRgbPanel->SetColon(pTimecode[LTC_TC_INDEX_COLON_2], 3, 0, tColoursColons.nRed, tColoursColons.nGreen, tColoursColons.nBlue);
+	m_pRgbPanel->SetColon(pTimecode[LTC_TC_INDEX_COLON_3], 5, 0, tColoursColons.nRed, tColoursColons.nGreen, tColoursColons.nBlue);
 
 	const char cLine[8] = { pTimecode[0], pTimecode[1], pTimecode[3], pTimecode[4], pTimecode[6], pTimecode[7], pTimecode[9], pTimecode[10] };
 
@@ -110,8 +110,8 @@ void LtcDisplayRgbPanel::Show(const char *pTimecode, struct TLtcDisplayRgbColour
 
 void LtcDisplayRgbPanel::ShowSysTime(const char *pSystemTime, struct TLtcDisplayRgbColours &tColours, struct TLtcDisplayRgbColours &tColoursColons) {
 	m_pRgbPanel->SetColonsOff();
-	m_pRgbPanel->SetColon(':', 2, 0, tColoursColons.nRed, tColoursColons.nGreen, tColoursColons.nBlue);
-	m_pRgbPanel->SetColon(':', 4, 0, tColoursColons.nRed, tColoursColons.nGreen, tColoursColons.nBlue);
+	m_pRgbPanel->SetColon(pSystemTime[LTC_ST_INDEX_COLON_1], 2, 0, tColoursColons.nRed, tColoursColons.nGreen, tColoursColons.nBlue);
+	m_pRgbPanel->SetColon(pSystemTime[LTC_ST_INDEX_COLON_2], 4, 0, tColoursColons.nRed, tColoursColons.nGreen, tColoursColons.nBlue);
 
 	const char cLine[] = { ' ', pSystemTime[0], pSystemTime[1], pSystemTime[3], pSystemTime[4], pSystemTime[6], pSystemTime[7], ' '};
 

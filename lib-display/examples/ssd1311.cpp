@@ -42,10 +42,18 @@ int main(int argc, char **argv) {
 		return -2;
 	}
 
+	bcm2835_gpio_fsel(4, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_set(4);
+	bcm2835_delayMicroseconds(100);
+
 	if (bcm2835_i2c_begin() != 1) {
 		fprintf(stderr, "bcm2835_i2c_begin() failed\n");
 		return -3;
 	}
+
+	bcm2835_gpio_clr(4);
+	bcm2835_delayMicroseconds(10);
+	bcm2835_gpio_set(4);
 
 	Display display(DisplayType::SSD1311);
 

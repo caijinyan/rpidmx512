@@ -56,7 +56,6 @@ int main(int argc, char **argv) {
 	display.PrintInfo();
 
 	if (isDetected) {
-		display.SetCursor(cursor::ON);
 		display.TextLine(1, "Line 1", 6);
 		display.TextLine(2, "Line 2", 6);
 	}

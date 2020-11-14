@@ -63,12 +63,16 @@ public:
 		default:
 			break;
 		}
+//
+//		if (((NtpClient::Get()->GetStatus() != NtpClientStatus::FAILED)
+//				&& (NtpClient::Get()->GetStatus() != NtpClientStatus::STOPPED))
+//				|| (GPSTimeClient::Get()->GetStatus() == GPSStatus::VALID)) {
+//			HwClock::Get()->SysToHc();
+//		}
 
-		if (((NtpClient::Get()->GetStatus() != NtpClientStatus::FAILED)
-				&& (NtpClient::Get()->GetStatus() != NtpClientStatus::STOPPED))
-				|| (GPSTimeClient::Get()->GetStatus() == GPSStatus::VALID)) {
+//		if ((NtpClient::Get()->GetStatus() != NtpClientStatus::FAILED) && (NtpClient::Get()->GetStatus() != NtpClientStatus::STOPPED)) {
 			HwClock::Get()->SysToHc();
-		}
+//		}
 
 		if (!m_ptLtcDisabledOutputs->bMax7219) {
 			LtcDisplayMax7219::Get()->Init(2); // TODO WriteChar

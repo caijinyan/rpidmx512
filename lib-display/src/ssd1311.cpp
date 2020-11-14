@@ -211,7 +211,7 @@ bool Ssd1311::CheckSSD1311() {
 	const auto isEqual = (memcmp(dataSend, &dataReceive[1], sizeof(dataSend)) == 0);
 
 #ifndef NDEBUG
-	printf("isEqual=%d\n", isEqual);
+	printf("CheckSSD1311 isEqual=%d\n", isEqual);
 #endif
 
 	return isEqual;

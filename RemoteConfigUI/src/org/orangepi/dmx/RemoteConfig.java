@@ -102,6 +102,8 @@ public class RemoteConfig extends JFrame {
 	private JMenuItem mntmSytemTime;
 	private JMenuItem mntmNewMenuItem;
 	private JMenuItem mntmBroadcast;
+	private JMenu mnWorkflow;
+	private JMenuItem mntmFirmwareInstallation;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -355,7 +357,7 @@ public class RemoteConfig extends JFrame {
 					if (path.getPathCount() == 2) {
 						DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getPathComponent(1);
 						TFTPClient client = new TFTPClient("", ((OrangePi) node.getUserObject()).getAddress());
-						client.Show();
+						client.setVisible(true);
 					}
 				} else {
 					JOptionPane.showMessageDialog(null, "No node selected for TFTP Client to run.");
@@ -467,6 +469,21 @@ public class RemoteConfig extends JFrame {
 				}
 			}
 		});
+		
+		mntmFirmwareInstallation.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TreePath path = tree.getSelectionPath();
+
+				if (path != null) {
+					if (path.getPathCount() == 2) {
+						DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getPathComponent(1);
+						doFirmwareInstallation((OrangePi) node.getUserObject());
+					}
+				} else {
+					JOptionPane.showMessageDialog(null, "No node selected for Workflow action.");
+				}
+			}
+		});
 	}
 
 	private void InitComponents() {
@@ -569,6 +586,12 @@ public class RemoteConfig extends JFrame {
 		mntmInterfaces = new JMenuItem("Interfaces");
 		mntmInterfaces.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_MASK));
 		mnNetwork.add(mntmInterfaces);
+		
+		mnWorkflow = new JMenu("Workflow");
+		menuBar.add(mnWorkflow);
+		
+		mntmFirmwareInstallation = new JMenuItem("Firmware installation");
+		mnWorkflow.add(mntmFirmwareInstallation);
 		
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
@@ -679,6 +702,13 @@ public class RemoteConfig extends JFrame {
 				int n = JOptionPane.showConfirmDialog(null, "TFTP is Off\nSet TFTP On? ", lblDisplayName.getText(), JOptionPane.OK_CANCEL_OPTION);
 				opi.doSetTFTP(n == JOptionPane.OK_OPTION);				
 			}
+		}
+	}
+	
+	private void doFirmwareInstallation(OrangePi opi) {
+		if (lblNodeId.getText().trim().length() != 0) {
+			FirmwareInstallation firmware = new FirmwareInstallation(opi); 
+			firmware.setVisible(true);
 		}
 	}
 	

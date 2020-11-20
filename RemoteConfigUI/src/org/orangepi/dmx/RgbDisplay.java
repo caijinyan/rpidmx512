@@ -90,7 +90,7 @@ public class RgbDisplay extends JDialog {
 		textMessage.setDocument(new JTextFieldLimit(WS28XX_NUM_OF_DIGITS));
 		textMessage.setColumns(10);
 		
-		btnDigitColour = new JButton("Set digit colour");
+		btnDigitColour = new JButton("Set time colour");
 		btnColonColour = new JButton("Set colon colour");
 		btnMessageColour = new JButton("Set message colour");
 		
@@ -128,7 +128,7 @@ public class RgbDisplay extends JDialog {
 		textFieldMaster.setEditable(false);
 		textFieldMaster.setColumns(10);
 		
-		btnMasterBrightness = new JButton("Master brightness");
+		btnMasterBrightness = new JButton("Time brightness");
 
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		groupLayout.setHorizontalGroup(

@@ -106,7 +106,6 @@ public class OrangePi {
 				} else if (Mode[0].equals("Monitor")) {
 					nodeMode = MODES_TXT[2];
 				} else if (Mode[0].equals("TimeCode")) {
-					nodeMode = MODES_TXT[3];
 					nodeLtcDisplay = LDISPLAY_TXT;
 					nodeTCNet = TCNET_TXT;
 					nodeGPS = GPS_TXT;

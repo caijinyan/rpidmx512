@@ -104,6 +104,12 @@ public class RemoteConfig extends JFrame {
 	private JMenuItem mntmBroadcast;
 	private JMenu mnWorkflow;
 	private JMenuItem mntmFirmwareInstallation;
+	private JMenu mnBackup;
+	private JMenuItem mntmBackupSelected;
+	private JMenuItem mntmBackupAll;
+	
+	HashSet<OrangePi> h;
+	private JMenuItem mntmRestore;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -480,7 +486,51 @@ public class RemoteConfig extends JFrame {
 						doFirmwareInstallation((OrangePi) node.getUserObject());
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "No node selected for Workflow action.");
+					JOptionPane.showMessageDialog(null, "No node selected for Workflow Firmware action.");
+				}
+			}
+		});
+		
+		mntmBackupSelected.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TreePath path = tree.getSelectionPath();
+
+				if (path != null) {
+					if (path.getPathCount() == 2) {
+						DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getPathComponent(1);
+						BackupConfiguration backup = new BackupConfiguration();
+						HashSet <OrangePi> hOrangePi = new HashSet <OrangePi>();
+						hOrangePi.add((OrangePi) node.getUserObject());
+						backup.doSaveSelected(hOrangePi);
+						backup.setVisible(true);
+					}
+				} else {
+					JOptionPane.showMessageDialog(null, "No node selected for Workflow Backup action.");
+				}
+			}
+		});
+		
+		mntmBackupAll.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				BackupConfiguration backup = new BackupConfiguration();
+				backup.doSaveSelected(h);
+				backup.setVisible(true);
+			}
+		});
+		
+		mntmRestore.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TreePath path = tree.getSelectionPath();
+
+				if (path != null) {
+					if (path.getPathCount() == 2) {
+						DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getPathComponent(1);
+						RestoreConfiguration restore = new RestoreConfiguration();
+						restore.doRestoreSelected((OrangePi) node.getUserObject());
+						restore.setVisible(true);
+					}
+				} else {
+					JOptionPane.showMessageDialog(null, "No node selected for Workflow Restore action.");
 				}
 			}
 		});
@@ -592,6 +642,18 @@ public class RemoteConfig extends JFrame {
 		
 		mntmFirmwareInstallation = new JMenuItem("Firmware installation");
 		mnWorkflow.add(mntmFirmwareInstallation);
+		
+		mnBackup = new JMenu("Backup");
+		mnWorkflow.add(mnBackup);
+		
+		mntmBackupAll = new JMenuItem("All");
+		mnBackup.add(mntmBackupAll);
+		
+		mntmBackupSelected = new JMenuItem("Selected");
+		mnBackup.add(mntmBackupSelected);
+		
+		mntmRestore = new JMenuItem("Restore");
+		mnWorkflow.add(mntmRestore);
 		
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
@@ -707,7 +769,7 @@ public class RemoteConfig extends JFrame {
 	
 	private void doFirmwareInstallation(OrangePi opi) {
 		if (lblNodeId.getText().trim().length() != 0) {
-			FirmwareInstallation firmware = new FirmwareInstallation(opi); 
+			FirmwareInstallation firmware = new FirmwareInstallation(opi, this); 
 			firmware.setVisible(true);
 		}
 	}
@@ -759,6 +821,10 @@ public class RemoteConfig extends JFrame {
 		}
 	}
 	
+	public void refresh() {
+		constructTree();
+	}
+	
 	private void constructTree() {			
 		System.out.println("Interface address: " + localAddress.getHostAddress());
 		
@@ -776,7 +842,7 @@ public class RemoteConfig extends JFrame {
 		DefaultMutableTreeNode root = new MyDefaultMutableTreeNode("Root");
 		DefaultMutableTreeNode child = null;
 
-		HashSet<OrangePi> h = new HashSet<OrangePi>();
+		h = new HashSet<OrangePi>();
 
 		byte[] buffer = new byte[BUFFERSIZE];
 		DatagramPacket dpack = new DatagramPacket(buffer, buffer.length);

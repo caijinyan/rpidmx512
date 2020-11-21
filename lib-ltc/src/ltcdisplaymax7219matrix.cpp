@@ -153,5 +153,5 @@ void LtcDisplayMax7219Matrix::ShowSysTime(const char *pSystemTime) {
 }
 
 void LtcDisplayMax7219Matrix::WriteChar(__attribute__((unused)) uint8_t nChar, __attribute__((unused)) uint8_t nPos) {
-	// TODO Max7219Matrix::WriteChar
+	// TODO Implement WriteChar
 }

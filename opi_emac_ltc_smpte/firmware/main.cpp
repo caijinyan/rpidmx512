@@ -188,13 +188,13 @@ void notmain(void) {
 
 	LtcDisplayMax7219 ltcDdisplayMax7219(ltcDisplayParams.GetMax7219Type());
 
-	LtcDisplayRgb ltcDisplayRgb(ltcParams.IsRgbPanelEnabled() ? LtcDisplayRgbType::RGBPANEL : LtcDisplayRgbType::WS28XX, ltcDisplayParams.GetWS28xxDisplayType());
+	LtcDisplayRgb ltcDisplayRgb(ltcParams.IsRgbPanelEnabled() ? ltcdisplayrgb::Type::RGBPANEL : ltcdisplayrgb::Type::WS28XX, ltcDisplayParams.GetWS28xxDisplayType());
 
 	/**
 	 * Select the source using buttons/rotary
 	 */
 
-	const bool IsAutoStart = ((ltcSource == ltc::source::SYSTIME) && ltcParams.IsAutoStart());
+	const auto IsAutoStart = ((ltcSource == ltc::source::SYSTIME) && ltcParams.IsAutoStart());
 
 	McpButtons sourceSelect(ltcSource, &tLtcDisabledOutputs, ltcParams.IsAltFunction(), ltcParams.GetSkipSeconds());
 
@@ -252,7 +252,7 @@ void notmain(void) {
 	 * Art-Net
 	 */
 
-	const bool bRunArtNet = ((ltcSource == ltc::source::ARTNET) || (!tLtcDisabledOutputs.bArtNet));
+	const auto bRunArtNet = ((ltcSource == ltc::source::ARTNET) || (!tLtcDisabledOutputs.bArtNet));
 
 	ArtNetNode node;
 	IpProg ipprog;
@@ -282,7 +282,7 @@ void notmain(void) {
 	 * TCNet
 	 */
 
-	const bool bRunTCNet = (ltcSource == ltc::source::TCNET);
+	const auto bRunTCNet = (ltcSource == ltc::source::TCNET);
 
 	TCNet tcnet(TCNET_TYPE_SLAVE);
 	StoreTCNet storetcnet;
@@ -317,7 +317,7 @@ void notmain(void) {
 	 * RTP-MIDI
 	 */
 
-	const bool bRunRtpMidi = ((ltcSource == ltc::source::APPLEMIDI) || (!tLtcDisabledOutputs.bRtpMidi));
+	const auto bRunRtpMidi = ((ltcSource == ltc::source::APPLEMIDI) || (!tLtcDisabledOutputs.bRtpMidi));
 
 	RtpMidi rtpMidi;
 
@@ -341,7 +341,7 @@ void notmain(void) {
 	 * The OSC Server is running when enabled AND source = TCNet OR Internal OR System-Time
 	 */
 
-	const bool bRunOSCServer = ((ltcSource == ltc::source::TCNET || ltcSource == ltc::source::INTERNAL || ltcSource == ltc::source::SYSTIME) && ltcParams.IsOscEnabled());
+	const auto bRunOSCServer = ((ltcSource == ltc::source::TCNET || ltcSource == ltc::source::INTERNAL || ltcSource == ltc::source::SYSTIME) && ltcParams.IsOscEnabled());
 
 	LtcOscServer oscServer;
 
@@ -365,13 +365,13 @@ void notmain(void) {
 
 	GPSParams gpsParams(new StoreGPS);
 
-	if ((ltcSource == ltc::source::SYSTIME)) {
+	if (ltcSource == ltc::source::SYSTIME) {
 		if (gpsParams.Load()) {
 			gpsParams.Dump();
 		}
 	}
 
-	const bool bRunGpsTimeClient = (gpsParams.IsEnabled() && (ltcSource == ltc::source::SYSTIME) && tLtcDisabledOutputs.bRgbPanel);
+	const auto bRunGpsTimeClient = (gpsParams.IsEnabled() && (ltcSource == ltc::source::SYSTIME) && tLtcDisabledOutputs.bRgbPanel);
 
 	GPSTimeClient gpsTimeClient(gpsParams.GetUtcOffset(), gpsParams.GetModule());
 
@@ -386,7 +386,7 @@ void notmain(void) {
 	 * When the NTP Server is enabled then the NTP Client is not running (stopped)
 	 */
 
-	const bool bRunNtpServer = ltcParams.IsNtpEnabled();
+	const auto bRunNtpServer = ltcParams.IsNtpEnabled();
 
 	NtpServer ntpServer(ltcParams.GetYear(), ltcParams.GetMonth(), ltcParams.GetDay());
 

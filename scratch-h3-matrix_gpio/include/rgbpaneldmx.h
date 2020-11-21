@@ -36,7 +36,7 @@
 
 class RgbPanelDmx: public RgbPanel, public LightSet {
 public:
-	RgbPanelDmx(uint32_t nColumns, uint32_t nRows, uint32_t nChain = rgbpanel::defaults::CHAIN, RgbPanelTypes type = rgbpanel::defaults::TYPE);
+	RgbPanelDmx(uint32_t nColumns, uint32_t nRows, uint32_t nChain = rgbpanel::defaults::CHAIN, rgbpanel::Types type = rgbpanel::defaults::TYPE);
 
 	void Start(__attribute__((unused)) uint8_t nPort = 0) {
 		RgbPanel::Start();

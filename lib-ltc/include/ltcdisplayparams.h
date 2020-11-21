@@ -43,9 +43,9 @@ struct TLtcDisplayParams {
 	uint8_t nWS28xxRgbMapping;			//  9
 	uint8_t nDisplayRgbIntensity;		// 10
 	uint8_t nDisplayRgbColonBlinkMode;	// 11
-	uint32_t aDisplayRgbColour[static_cast<uint32_t>(LtcDisplayRgbColourIndex::LAST)]; // 23	5 * 4 = 20
-	uint8_t nWS28xxDisplayType;			// 32
-	char aInfoMessage[8];				// 40
+	uint32_t aDisplayRgbColour[static_cast<uint32_t>(ltcdisplayrgb::ColourIndex::LAST)]; // 35	6 * 4 = 24
+	uint8_t nWS28xxDisplayType;			// 36
+	char aInfoMessage[8];				// 44
 } __attribute__((packed));
 
 static_assert(sizeof(struct TLtcDisplayParams) <= 64, "struct TLtcDisplayParams is too large");
@@ -98,8 +98,8 @@ public:
 		return static_cast<TWS28XXType>(m_tLtcDisplayParams.nWS28xxLedType);
 	}
 
-	LtcDisplayRgbWS28xxType GetWS28xxDisplayType() const {
-		return static_cast<LtcDisplayRgbWS28xxType>(m_tLtcDisplayParams.nWS28xxDisplayType);
+	ltcdisplayrgb::WS28xxType GetWS28xxDisplayType() const {
+		return static_cast<ltcdisplayrgb::WS28xxType>(m_tLtcDisplayParams.nWS28xxDisplayType);
 	}
 
 	const char *GetInfoMessage(uint32_t &nLength) const {

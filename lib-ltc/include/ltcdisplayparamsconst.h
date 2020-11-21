@@ -42,7 +42,7 @@ struct LtcDisplayParamsConst {
 
 	static const char INTENSITY[];
 	static const char COLON_BLINK_MODE[];
-	static const char COLOUR[static_cast<uint32_t>(LtcDisplayRgbColourIndex::LAST)][24];
+	static const char COLOUR[static_cast<uint32_t>(ltcdisplayrgb::ColourIndex::LAST)][24];
 
 	/**
 	 * WS28xx specific

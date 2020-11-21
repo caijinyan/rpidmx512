@@ -20,9 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/**
- * PoC
- */
+
+#if !defined(ORANGE_PI)
+# error  Orange Pi Zero only
+#endif
 
 #include <cassert>
 #include <algorithm>
@@ -44,8 +45,6 @@
 extern "C" {
 void core1_task();
 }
-
-// Orange Pi Zero only
 
 #define HUB75B_A		GPIO_EXT_13		// PA0
 #define HUB75B_B		GPIO_EXT_11		// PA1
@@ -192,7 +191,7 @@ void RgbPanel::Dump() {
 }
 
 void RgbPanel::Cls() {
-	uint64_t *lp = reinterpret_cast<uint64_t*>(s_pFramebuffer1);
+	auto lp = reinterpret_cast<uint64_t*>(s_pFramebuffer1);
 	uint32_t n = s_nBufferSize * 4;
 
 	while ((n / 8) > 0) {
@@ -289,8 +288,6 @@ void core1_task() {
 	uint32_t nGPIO = H3_PIO_PORTA->DAT & ~((1U << HUB75B_R1) | (1U << HUB75B_G1) | (1U << HUB75B_B1) | (1U << HUB75B_R2) | (1U << HUB75B_G2) | (1U << HUB75B_B2));
 
 	for (;;) {
-//		uint32_t nGPIO = H3_PIO_PORTA->DAT & ~((1U << HUB75B_R1) | (1U << HUB75B_G1) | (1U << HUB75B_B1) | (1U << HUB75B_R2) | (1U << HUB75B_G2) | (1U << HUB75B_B2));
-
 		for (uint32_t nRow = 0; nRow < (s_nRows / 2); nRow++) {
 
 			const uint32_t nBaseIndex = nRow * nMultiplier;
@@ -330,7 +327,7 @@ void core1_task() {
 		s_nUpdatesCounter++;
 
 		if (s_bDoSwap) {
-			uint32_t *pTmp = s_pFramebuffer1;
+			auto pTmp = s_pFramebuffer1;
 			s_pFramebuffer1 = s_pFramebuffer2;
 			s_pFramebuffer2 = pTmp;
 			dmb();

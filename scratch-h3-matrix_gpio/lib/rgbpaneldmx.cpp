@@ -31,7 +31,9 @@
 
 #include "debug.h"
 
-RgbPanelDmx::RgbPanelDmx(uint32_t nColumns, uint32_t nRows, uint32_t nChain, RgbPanelTypes tType): RgbPanel(nColumns, nRows, nChain, tType) {
+using namespace rgbpanel;
+
+RgbPanelDmx::RgbPanelDmx(uint32_t nColumns, uint32_t nRows, uint32_t nChain, Types tType): RgbPanel(nColumns, nRows, nChain, tType) {
 	m_nLastPortId = (m_nColumns * m_nRows) / 170;
 	m_nLastPortDataLength = 3 * ((m_nColumns * m_nRows) - (m_nLastPortId * 170));
 }

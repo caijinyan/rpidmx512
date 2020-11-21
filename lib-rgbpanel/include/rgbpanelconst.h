@@ -28,19 +28,18 @@
 
 #include <stdint.h>
 
-enum class RgbPanelTypes {
+namespace rgbpanel {
+enum class Types {
 	HUB75,
 	FM6126A,
 	FM6127,
 	UNDEFINED
 };
-
-namespace rgbpanel {
 namespace defaults {
 static constexpr auto COLS = 32;
 static constexpr auto ROWS = 32;
 static constexpr auto CHAIN = 1;
-static constexpr auto TYPE = RgbPanelTypes::HUB75;
+static constexpr auto TYPE = Types::HUB75;
 }  // namespace defaults
 namespace config {
 static constexpr auto COLS = 2;
@@ -52,7 +51,7 @@ static constexpr auto MAX_NAME_LENGTH = 7 + 1;  	// + '\0'
 }  // namespace rgbpanel
 
 struct RgbPanelConst {
-	static const char TYPE[static_cast<unsigned>(RgbPanelTypes::UNDEFINED)][rgbpanel::type::MAX_NAME_LENGTH];
+	static const char TYPE[static_cast<unsigned>(rgbpanel::Types::UNDEFINED)][rgbpanel::type::MAX_NAME_LENGTH];
 
 	static const uint32_t COLS[rgbpanel::config::COLS];
 	static const uint32_t ROWS[rgbpanel::config::ROWS];

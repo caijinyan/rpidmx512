@@ -107,7 +107,7 @@ void RgbPanelParams::callbackFunction(const char *pLine) {
 
 
 	if (Sscan::Uint8(pLine, RgbPanelParamsConst::ROWS, nValue8) == Sscan::OK) {
-		if ((m_tRgbPanelParams.nRows = RgbPanel::ValidateColumns(nValue8)) != defaults::ROWS) {
+		if ((m_tRgbPanelParams.nRows = RgbPanel::ValidateRows(nValue8)) != defaults::ROWS) {
 			m_tRgbPanelParams.nSetList |= RgbPanelParamsMask::ROWS;
 		} else {
 			m_tRgbPanelParams.nSetList &= ~RgbPanelParamsMask::ROWS;
@@ -154,7 +154,7 @@ void RgbPanelParams::Builder(const struct TRgbPanelParams *pRgbPanelParams, char
 	builder.Add(RgbPanelParamsConst::COLS, m_tRgbPanelParams.nCols, isMaskSet(RgbPanelParamsMask::COLS));
 	builder.Add(RgbPanelParamsConst::ROWS, m_tRgbPanelParams.nRows, isMaskSet(RgbPanelParamsMask::ROWS));
 	builder.Add(RgbPanelParamsConst::CHAIN, m_tRgbPanelParams.nChain, isMaskSet(RgbPanelParamsMask::CHAIN));
-	builder.Add(RgbPanelParamsConst::TYPE, RgbPanel::GetType(static_cast<RgbPanelTypes>(m_tRgbPanelParams.nType)), isMaskSet(RgbPanelParamsMask::TYPE));
+	builder.Add(RgbPanelParamsConst::TYPE, RgbPanel::GetType(static_cast<Types>(m_tRgbPanelParams.nType)), isMaskSet(RgbPanelParamsMask::TYPE));
 
 	nSize = builder.GetSize();
 }

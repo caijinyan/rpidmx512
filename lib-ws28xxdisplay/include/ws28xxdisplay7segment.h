@@ -69,9 +69,9 @@ private:
 
 private:
 #if defined(USE_SPI_DMA)
-	WS28xxDMA *m_pWS28xx;
+	WS28xxDMA *m_pWS28xx{nullptr};
 #else
-	WS28xx *m_pWS28xx;
+	WS28xx *m_pWS28xx{nullptr};
 #endif
 };
 

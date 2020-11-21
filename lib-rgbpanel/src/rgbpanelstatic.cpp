@@ -49,20 +49,20 @@ uint32_t RgbPanel::ValidateRows(uint32_t nRows) {
 	return defaults::ROWS;
 }
 
-RgbPanelTypes RgbPanel::GetType(const char *pType) {
+Types RgbPanel::GetType(const char *pType) {
 	assert(pType != nullptr);
 
-	for (uint32_t i = 0; i < static_cast<uint32_t>(RgbPanelTypes::UNDEFINED); i++) {
+	for (uint32_t i = 0; i < static_cast<uint32_t>(Types::UNDEFINED); i++) {
 		if (strcasecmp(pType, RgbPanelConst::TYPE[i]) == 0) {
-			return static_cast<RgbPanelTypes>(i);
+			return static_cast<Types>(i);
 		}
 	}
 
 	return defaults::TYPE;
 }
 
-const char* RgbPanel::GetType(RgbPanelTypes tType) {
-	if (tType < RgbPanelTypes::UNDEFINED) {
+const char* RgbPanel::GetType(Types tType) {
+	if (tType < Types::UNDEFINED) {
 		return RgbPanelConst::TYPE[static_cast<uint32_t>(tType)];
 	}
 

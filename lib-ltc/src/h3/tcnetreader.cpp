@@ -47,19 +47,19 @@
 #include "network.h"
 
 namespace cmd {
-	static constexpr char LAYER[] = "layer#";
-	static constexpr char TYPE[] = "type#";
-	static constexpr char TIMECODE[] = "timecode#";
+static constexpr char LAYER[] = "layer#";
+static constexpr char TYPE[] = "type#";
+static constexpr char TIMECODE[] = "timecode#";
 }
 
 namespace length {
-	static constexpr auto LAYER = sizeof(cmd::LAYER) - 1;
-	static constexpr auto TYPE = sizeof(cmd::TYPE) - 1;
-	static constexpr auto TIMECODE = sizeof(cmd::TIMECODE) - 1;
+static constexpr auto LAYER = sizeof(cmd::LAYER) - 1;
+static constexpr auto TYPE = sizeof(cmd::TYPE) - 1;
+static constexpr auto TIMECODE = sizeof(cmd::TIMECODE) - 1;
 }
 
 namespace udp {
-	static constexpr auto PORT = 0x0ACA;
+static constexpr auto PORT = 0x0ACA;
 }
 
 // IRQ Timer0
@@ -157,7 +157,7 @@ void TCNetReader::HandleUdpRequest() {
 	debug_dump(m_Buffer, m_nBytesReceived);
 
 	if ((m_nBytesReceived == (6 + length::LAYER + 1)) && (memcmp(&m_Buffer[6], cmd::LAYER, length::LAYER) == 0)) {
-		const TCNetLayer tLayer = TCNet::GetLayer(m_Buffer[6 + length::LAYER]);
+		const auto tLayer = TCNet::GetLayer(m_Buffer[6 + length::LAYER]);
 
 		TCNet::Get()->SetLayer(tLayer);
 		TCNetDisplay::Show();

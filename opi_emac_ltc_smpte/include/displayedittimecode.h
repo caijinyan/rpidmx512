@@ -41,11 +41,11 @@ private:
 	void KeyRight();
 
 private:
-	uint8_t m_nFrames {0};
+	uint8_t m_nFrames{0};
 	enum State {
 		IDLE, EDIT
 	} m_State {IDLE};
-	uint32_t m_nCursorPositionIndex {0};
+	uint32_t m_nCursorPositionIndex{0};
 	bool m_bCursorOn {false};
 };
 

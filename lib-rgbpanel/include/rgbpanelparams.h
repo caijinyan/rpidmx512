@@ -80,8 +80,8 @@ public:
 		return m_tRgbPanelParams.nChain;
 	}
 
-	RgbPanelTypes GetType() const {
-		return static_cast<RgbPanelTypes>(m_tRgbPanelParams.nType);
+	rgbpanel::Types GetType() const {
+		return static_cast<rgbpanel::Types>(m_tRgbPanelParams.nType);
 	}
 
     static void staticCallbackFunction(void *p, const char *s);

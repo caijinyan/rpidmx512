@@ -88,7 +88,7 @@ void ArtNetReader::Handler(const struct TArtNetTimeCode *ArtNetTimeCode) {
 		RtpMidi::Get()->SendTimeCode(reinterpret_cast<const struct _midi_send_tc*>(ArtNetTimeCode));
 	}
 
-	memcpy(&m_tMidiTimeCode, ArtNetTimeCode, sizeof (struct _midi_send_tc ));
+	memcpy(&m_tMidiTimeCode, ArtNetTimeCode, sizeof(struct _midi_send_tc));
 
 	LtcOutputs::Get()->Update(reinterpret_cast<const struct TLtcTimeCode*>(ArtNetTimeCode));
 }

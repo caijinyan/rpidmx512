@@ -1,5 +1,7 @@
 #
-DEFINES = #NDEBUG
+DEFINES = NDEBUG
+#
+EXTRA_SRCDIR = fonts
 #
 EXTRA_INCLUDES = ../lib-properties/include
 #

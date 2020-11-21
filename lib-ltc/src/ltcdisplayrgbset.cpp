@@ -29,7 +29,7 @@
 
 #include "debug.h"
 
-using namespace ltc;
+using namespace ltcdisplayrgb;
 
 void LtcDisplayRgbSet::Init(__attribute__((unused)) TWS28XXType tLedType, __attribute__((unused)) TRGBMapping tRGBMapping) {
 	DEBUG_ENTRY
@@ -43,19 +43,19 @@ void LtcDisplayRgbSet::Init() {
 	DEBUG_EXIT
 }
 
-void LtcDisplayRgbSet::ShowFPS(__attribute__((unused)) type tTimeCodeType, __attribute__((unused)) struct TLtcDisplayRgbColours &tColours) {
+void LtcDisplayRgbSet::ShowFPS(__attribute__((unused)) ltc::type tTimeCodeType, __attribute__((unused)) struct Colours &tColours) {
 	DEBUG_ENTRY
 
 	DEBUG_EXIT
 }
 
-void LtcDisplayRgbSet::ShowSource(__attribute__((unused)) ltc::source tSource, __attribute__((unused)) struct TLtcDisplayRgbColours &tColours) {
+void LtcDisplayRgbSet::ShowSource(__attribute__((unused)) ltc::source tSource, __attribute__((unused)) struct Colours &tColours) {
 	DEBUG_ENTRY
 
 	DEBUG_EXIT
 }
 
-void LtcDisplayRgbSet::ShowInfo(__attribute__((unused)) const char *pInfo, __attribute__((unused)) uint32_t nLength, __attribute__((unused)) struct TLtcDisplayRgbColours &tColours) {
+void LtcDisplayRgbSet::ShowInfo(__attribute__((unused)) const char *pInfo, __attribute__((unused)) uint32_t nLength, __attribute__((unused)) struct Colours &tColours) {
 	DEBUG_ENTRY
 
 	DEBUG_EXIT

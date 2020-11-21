@@ -23,10 +23,6 @@
  * THE SOFTWARE.
  */
 
-#ifdef NDEBUG
-#undef NDEBUG
-#endif
-
 #include <cassert>
 #include <algorithm>
 #include <stdint.h>
@@ -41,10 +37,12 @@
 #include "debug.h"
 
 static constexpr char aTypes[5][8 + 1] =
-	{ "Film  24", "EBU   25", "DF 29.97", "SMPTE 30", "----- --" };
+	{ "Film 24 ", "EBU 25  ", "DF 29.97", "SMPTE 30", "----- --" };
 
 static constexpr char aSources[ltc::source::UNDEFINED][8 + 1] =
 	{ "LTC", "Art-Net", "Midi", "TCNet", "Internal", "RtpMidi", "Systime" };
+
+using namespace ltcdisplayrgb;
 
 LtcDisplayRgbPanel::LtcDisplayRgbPanel() {
 	DEBUG_ENTRY
@@ -83,7 +81,7 @@ void LtcDisplayRgbPanel::Print() {
 	printf("RGB Panel\n");
 }
 
-void LtcDisplayRgbPanel::Show(const char *pTimecode, struct TLtcDisplayRgbColours &tColours, struct TLtcDisplayRgbColours &tColoursColons) {
+void LtcDisplayRgbPanel::Show(const char *pTimecode, struct Colours &tColours, struct Colours &tColoursColons) {
 	m_pRgbPanel->SetColonsOff();
 	m_pRgbPanel->SetColon(pTimecode[LTC_TC_INDEX_COLON_1], 1, 0, tColoursColons.nRed, tColoursColons.nGreen, tColoursColons.nBlue);
 	m_pRgbPanel->SetColon(pTimecode[LTC_TC_INDEX_COLON_2], 3, 0, tColoursColons.nRed, tColoursColons.nGreen, tColoursColons.nBlue);
@@ -97,10 +95,6 @@ void LtcDisplayRgbPanel::Show(const char *pTimecode, struct TLtcDisplayRgbColour
 	m_LineColours[0].nGreen = tColours.nGreen;
 	m_LineColours[0].nBlue = tColours.nBlue;
 
-	m_LineColours[1].nRed = tColours.nRed;
-	m_LineColours[1].nGreen = tColours.nGreen;
-	m_LineColours[1].nBlue = tColours.nBlue;
-
 	for (uint32_t i = 0; i < 4; i++) {
 		m_pRgbPanel->TextLine(1 + i, m_Line[i], 8, m_LineColours[i].nRed, m_LineColours[i].nGreen, m_LineColours[i].nBlue);
 	}
@@ -108,7 +102,7 @@ void LtcDisplayRgbPanel::Show(const char *pTimecode, struct TLtcDisplayRgbColour
 	m_pRgbPanel->Show();
 }
 
-void LtcDisplayRgbPanel::ShowSysTime(const char *pSystemTime, struct TLtcDisplayRgbColours &tColours, struct TLtcDisplayRgbColours &tColoursColons) {
+void LtcDisplayRgbPanel::ShowSysTime(const char *pSystemTime, struct Colours &tColours, struct Colours &tColoursColons) {
 	m_pRgbPanel->SetColonsOff();
 	m_pRgbPanel->SetColon(pSystemTime[LTC_ST_INDEX_COLON_1], 2, 0, tColoursColons.nRed, tColoursColons.nGreen, tColoursColons.nBlue);
 	m_pRgbPanel->SetColon(pSystemTime[LTC_ST_INDEX_COLON_2], 4, 0, tColoursColons.nRed, tColoursColons.nGreen, tColoursColons.nBlue);
@@ -121,10 +115,6 @@ void LtcDisplayRgbPanel::ShowSysTime(const char *pSystemTime, struct TLtcDisplay
 	m_LineColours[0].nGreen = tColours.nGreen;
 	m_LineColours[0].nBlue = tColours.nBlue;
 
-	m_LineColours[1].nRed = tColours.nRed;
-	m_LineColours[1].nGreen = tColours.nGreen;
-	m_LineColours[1].nBlue = tColours.nBlue;
-
 	m_pRgbPanel->TextLine(1, m_Line[0], 8, m_LineColours[0].nRed, m_LineColours[0].nGreen, m_LineColours[0].nBlue);
 	m_pRgbPanel->ClearLine(2);
 	m_pRgbPanel->TextLine(3, m_Line[2], 8, m_LineColours[2].nRed, m_LineColours[2].nGreen, m_LineColours[2].nBlue);
@@ -133,13 +123,13 @@ void LtcDisplayRgbPanel::ShowSysTime(const char *pSystemTime, struct TLtcDisplay
 	m_pRgbPanel->Show();
 }
 
-void LtcDisplayRgbPanel::ShowMessage(const char *pMessage, struct TLtcDisplayRgbColours &tColours) {
+void LtcDisplayRgbPanel::ShowMessage(const char *pMessage, struct Colours &tColours) {
 	m_pRgbPanel->SetColonsOff();
-	m_pRgbPanel->TextLine(1, pMessage, LTCDISPLAY_MAX_MESSAGE_SIZE, tColours.nRed, tColours.nGreen, tColours.nBlue);
+	m_pRgbPanel->TextLine(1, pMessage, MAX_MESSAGE_SIZE, tColours.nRed, tColours.nGreen, tColours.nBlue);
 	m_pRgbPanel->Show();
 }
 
-void LtcDisplayRgbPanel::ShowFPS(ltc::type tTimeCodeType, struct TLtcDisplayRgbColours &tColours) {
+void LtcDisplayRgbPanel::ShowFPS(ltc::type tTimeCodeType, struct Colours &tColours) {
 	memcpy(m_Line[1], aTypes[tTimeCodeType], 8);
 
 	m_LineColours[1].nRed = tColours.nRed;
@@ -147,7 +137,7 @@ void LtcDisplayRgbPanel::ShowFPS(ltc::type tTimeCodeType, struct TLtcDisplayRgbC
 	m_LineColours[1].nBlue = tColours.nBlue;
 }
 
-void LtcDisplayRgbPanel::ShowSource(ltc::source tSource, struct TLtcDisplayRgbColours &tColours) {
+void LtcDisplayRgbPanel::ShowSource(ltc::source tSource, struct Colours &tColours) {
 	memcpy(m_Line[3], aSources[tSource], 8);
 
 	m_LineColours[3].nRed = tColours.nRed;
@@ -155,7 +145,7 @@ void LtcDisplayRgbPanel::ShowSource(ltc::source tSource, struct TLtcDisplayRgbCo
 	m_LineColours[3].nBlue = tColours.nBlue;
 }
 
-void LtcDisplayRgbPanel::ShowInfo(const char *pInfo, uint32_t nLength, struct TLtcDisplayRgbColours &tColours) {
+void LtcDisplayRgbPanel::ShowInfo(const char *pInfo, uint32_t nLength, struct Colours &tColours) {
 	nLength = std::min(8U, nLength);
 	uint32_t i;
 	for (i = 0; i < nLength; i++) {
@@ -174,8 +164,8 @@ void LtcDisplayRgbPanel::ShowInfo(const char *pInfo, uint32_t nLength, struct TL
 	m_pRgbPanel->Show();
 }
 
-void LtcDisplayRgbPanel::WriteChar(__attribute__((unused)) uint8_t nChar, __attribute__((unused)) uint8_t nPos, __attribute__((unused)) struct TLtcDisplayRgbColours &tColours) {
+void LtcDisplayRgbPanel::WriteChar(__attribute__((unused)) uint8_t nChar, __attribute__((unused)) uint8_t nPos, __attribute__((unused)) struct Colours &tColours) {
 	DEBUG_ENTRY
-
+	// TODO Implement WriteChar
 	DEBUG_EXIT
 }

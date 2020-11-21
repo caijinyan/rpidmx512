@@ -31,29 +31,36 @@
 #include "ltcdisplayrgb.h"
 #include "rgbmapping.h"
 
-void LtcDisplayRgb::SetRGB(uint8_t nRed, uint8_t nGreen, uint8_t nBlue, LtcDisplayRgbColourIndex tIndex) {
+using namespace ltcdisplayrgb;
+
+void LtcDisplayRgb::SetRGB(uint8_t nRed, uint8_t nGreen, uint8_t nBlue, ColourIndex tIndex) {
 	switch (tIndex) {
-	case LtcDisplayRgbColourIndex::DIGIT:
-		m_tColours.nRed = nRed;
-		m_tColours.nGreen = nGreen;
-		m_tColours.nBlue = nBlue;
+	case ColourIndex::TIME:
+		m_tColoursTime.nRed = nRed;
+		m_tColoursTime.nGreen = nGreen;
+		m_tColoursTime.nBlue = nBlue;
 		break;
-	case LtcDisplayRgbColourIndex::COLON:
+	case ColourIndex::COLON:
 		m_tColoursColons.nRed = nRed;
 		m_tColoursColons.nGreen = nGreen;
 		m_tColoursColons.nBlue = nBlue;
 		break;
-	case LtcDisplayRgbColourIndex::MESSAGE:
+	case ColourIndex::MESSAGE:
 		m_tColoursMessage.nRed = nRed;
 		m_tColoursMessage.nGreen = nGreen;
 		m_tColoursMessage.nBlue = nBlue;
 		break;
-	case LtcDisplayRgbColourIndex::INFO:
+	case ColourIndex::FPS:
+		m_tColoursFPS.nRed = nRed;
+		m_tColoursFPS.nGreen = nGreen;
+		m_tColoursFPS.nBlue = nBlue;
+		break;
+	case ColourIndex::INFO:
 		m_tColoursInfo.nRed = nRed;
 		m_tColoursInfo.nGreen = nGreen;
 		m_tColoursInfo.nBlue = nBlue;
 		break;
-	case LtcDisplayRgbColourIndex::SOURCE:
+	case ColourIndex::SOURCE:
 		m_tColoursSource.nRed = nRed;
 		m_tColoursSource.nGreen = nGreen;
 		m_tColoursSource.nBlue = nBlue;
@@ -63,7 +70,7 @@ void LtcDisplayRgb::SetRGB(uint8_t nRed, uint8_t nGreen, uint8_t nBlue, LtcDispl
 	}
 }
 
-void LtcDisplayRgb::SetRGB(uint32_t nRGB, LtcDisplayRgbColourIndex tIndex) {
+void LtcDisplayRgb::SetRGB(uint32_t nRGB, ColourIndex tIndex) {
 	const auto nRed = ((nRGB & 0xFF0000) >> 16);
 	const auto nGreen = ((nRGB & 0xFF00) >> 8);
 	const auto nBlue = (nRGB & 0xFF);
@@ -76,9 +83,9 @@ void LtcDisplayRgb::SetRGB(const char *pHexString) {
 		return;
 	}
 
-	const auto tIndex = static_cast<LtcDisplayRgbColourIndex>((pHexString[0] - '0'));
+	const auto tIndex = static_cast<ColourIndex>((pHexString[0] - '0'));
 
-	if (tIndex >= LtcDisplayRgbColourIndex::LAST) {
+	if (tIndex >= ColourIndex::LAST) {
 		return;
 	}
 
@@ -92,7 +99,7 @@ uint32_t LtcDisplayRgb::hexadecimalToDecimal(const char *pHexValue, uint32_t nLe
 	uint32_t nReturn = 0;
 
 	while (nLength-- > 0) {
-		const char c = *pSrc;
+		const auto c = *pSrc;
 
 		if (isxdigit(c) == 0) {
 			break;

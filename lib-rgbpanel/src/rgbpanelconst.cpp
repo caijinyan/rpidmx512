@@ -27,7 +27,7 @@
 
 using namespace rgbpanel;
 
-const char RgbPanelConst::TYPE[static_cast<unsigned>(RgbPanelTypes::UNDEFINED)][type::MAX_NAME_LENGTH] = {
+const char RgbPanelConst::TYPE[static_cast<unsigned>(Types::UNDEFINED)][type::MAX_NAME_LENGTH] = {
 		"HUB75",
 		"FM6126A",
 		"FM6127"

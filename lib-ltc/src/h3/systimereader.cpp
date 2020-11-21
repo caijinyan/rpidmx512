@@ -52,19 +52,19 @@
 #include "debug.h"
 
 namespace cmd {
-	static constexpr char aStart[] = "start";
-	static constexpr char aStop[] = "stop";
-	static constexpr char aRate[] = "rate#";
+static constexpr char aStart[] = "start";
+static constexpr char aStop[] = "stop";
+static constexpr char aRate[] = "rate#";
 }
 
 namespace length {
-	static constexpr auto START = sizeof(cmd::aStart) - 1;
-	static constexpr auto STOP = sizeof(cmd::aStop) - 1;
-	static constexpr auto RATE = sizeof(cmd::aRate) - 1;
+static constexpr auto START = sizeof(cmd::aStart) - 1;
+static constexpr auto STOP = sizeof(cmd::aStop) - 1;
+static constexpr auto RATE = sizeof(cmd::aRate) - 1;
 }
 
 namespace udp {
-	static constexpr auto PORT = 0x5443;
+static constexpr auto PORT = 0x5443;
 }
 
 // IRQ Timer0

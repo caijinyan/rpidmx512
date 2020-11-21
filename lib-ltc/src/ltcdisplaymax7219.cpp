@@ -31,13 +31,9 @@
 #include "ltcdisplaymax72197segment.h"
 #include "ltcdisplaymax7219matrix.h"
 
-#include "debug.h"
-
 LtcDisplayMax7219 *LtcDisplayMax7219::s_pThis = nullptr;
 
 LtcDisplayMax7219::LtcDisplayMax7219(TLtcDisplayMax7219Types tType): m_tMax7219Types(tType) {
-	DEBUG_ENTRY
-
 	assert(s_pThis == nullptr);
 	s_pThis = this;
 
@@ -48,7 +44,6 @@ LtcDisplayMax7219::LtcDisplayMax7219(TLtcDisplayMax7219Types tType): m_tMax7219T
 	}
 
 	assert(m_pMax7219Set != nullptr);
-	DEBUG_EXIT
 }
 
 LtcDisplayMax7219::~LtcDisplayMax7219() {

@@ -36,6 +36,8 @@
 
 #include "debug.h"
 
+using namespace ltcdisplayrgb;
+
 LtcDisplayWS28xx7Segment::LtcDisplayWS28xx7Segment() {
 	DEBUG1_ENTRY
 
@@ -53,7 +55,7 @@ void LtcDisplayWS28xx7Segment::Init(TWS28XXType tLedType, TRGBMapping tRGBMappin
 	DEBUG1_EXIT
 }
 
-void LtcDisplayWS28xx7Segment::Show(const char *pTimecode, struct TLtcDisplayRgbColours &tColours, struct TLtcDisplayRgbColours &tColoursColons) {
+void LtcDisplayWS28xx7Segment::Show(const char *pTimecode, struct Colours &tColours, struct Colours &tColoursColons) {
 	auto nRed = tColours.nRed;
 	auto nGreen = tColours.nGreen;
 	auto nBlue = tColours.nBlue;
@@ -73,7 +75,7 @@ void LtcDisplayWS28xx7Segment::Show(const char *pTimecode, struct TLtcDisplayRgb
 	m_pWS28xxDisplay7Segment->Show();
 }
 
-void LtcDisplayWS28xx7Segment::ShowSysTime(const char *pSystemTime, struct TLtcDisplayRgbColours &tColours, struct TLtcDisplayRgbColours &tColoursColons) {
+void LtcDisplayWS28xx7Segment::ShowSysTime(const char *pSystemTime, struct Colours &tColours, struct Colours &tColoursColons) {
 	auto nRed = tColours.nRed;
 	auto nGreen = tColours.nGreen;
 	auto nBlue = tColours.nBlue;
@@ -93,8 +95,8 @@ void LtcDisplayWS28xx7Segment::ShowSysTime(const char *pSystemTime, struct TLtcD
 	m_pWS28xxDisplay7Segment->Show();
 }
 
-void LtcDisplayWS28xx7Segment::ShowMessage(const char *pMessage, struct TLtcDisplayRgbColours &tColours) {
-	assert(WS28xxDisplay7SegmentConfig::NUM_OF_DIGITS == LTCDISPLAY_MAX_MESSAGE_SIZE);
+void LtcDisplayWS28xx7Segment::ShowMessage(const char *pMessage, struct Colours &tColours) {
+	assert(WS28xxDisplay7SegmentConfig::NUM_OF_DIGITS == MAX_MESSAGE_SIZE);
 
 	const auto nRed = tColours.nRed;
 	const auto nGreen = tColours.nGreen;
@@ -105,7 +107,7 @@ void LtcDisplayWS28xx7Segment::ShowMessage(const char *pMessage, struct TLtcDisp
 	m_pWS28xxDisplay7Segment->Show();
 }
 
-void LtcDisplayWS28xx7Segment::WriteChar(uint8_t nChar, uint8_t nPos, struct TLtcDisplayRgbColours &tColours) {
+void LtcDisplayWS28xx7Segment::WriteChar(uint8_t nChar, uint8_t nPos, struct Colours &tColours) {
 	m_pWS28xxDisplay7Segment->WriteChar(static_cast<char>(nChar), nPos, tColours.nRed, tColours.nGreen, tColours.nBlue);
 	m_pWS28xxDisplay7Segment->Show();
 }

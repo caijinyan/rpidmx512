@@ -64,14 +64,14 @@ void LtcDisplayParams::Builder(const struct TLtcDisplayParams *ptLtcDisplayParam
 
 	builder.AddComment("RGB Display (generic)");
 	builder.Add(LtcDisplayParamsConst::INTENSITY, m_tLtcDisplayParams.nDisplayRgbIntensity, isMaskSet(LtcDisplayParamsMask::DISPLAYRGB_INTENSITY));
-	builder.Add(LtcDisplayParamsConst::COLON_BLINK_MODE, m_tLtcDisplayParams.nDisplayRgbColonBlinkMode == static_cast<uint8_t>(LtcDisplayRgbColonBlinkMode::OFF) ? "off" : (m_tLtcDisplayParams.nDisplayRgbColonBlinkMode == static_cast<uint8_t>(LtcDisplayRgbColonBlinkMode::DOWN) ? "down" : "up") , isMaskSet(LtcDisplayParamsMask::DISPLAYRGB_COLON_BLINK_MODE));
+	builder.Add(LtcDisplayParamsConst::COLON_BLINK_MODE, m_tLtcDisplayParams.nDisplayRgbColonBlinkMode == static_cast<uint8_t>(ltcdisplayrgb::ColonBlinkMode::OFF) ? "off" : (m_tLtcDisplayParams.nDisplayRgbColonBlinkMode == static_cast<uint8_t>(ltcdisplayrgb::ColonBlinkMode::DOWN) ? "down" : "up") , isMaskSet(LtcDisplayParamsMask::DISPLAYRGB_COLON_BLINK_MODE));
 
-	for (uint32_t nIndex = 0; nIndex < static_cast<uint32_t>(LtcDisplayRgbColourIndex::LAST); nIndex++) {
+	for (uint32_t nIndex = 0; nIndex < static_cast<uint32_t>(ltcdisplayrgb::ColourIndex::LAST); nIndex++) {
 		builder.AddHex24(LtcDisplayParamsConst::COLOUR[nIndex], m_tLtcDisplayParams.aDisplayRgbColour[nIndex],isMaskSet(LtcDisplayParamsMask::DISLAYRGB_COLOUR_INDEX << nIndex));
 	}
 
 	builder.AddComment("WS28xx (specific)");
-	builder.Add(LtcDisplayParamsConst::WS28XX_TYPE, m_tLtcDisplayParams.nWS28xxDisplayType == static_cast<uint8_t>(LtcDisplayRgbWS28xxType::SEGMENT) ? "7segment" : "matrix" , isMaskSet(LtcDisplayParamsMask::WS28XX_DISPLAY_TYPE));
+	builder.Add(LtcDisplayParamsConst::WS28XX_TYPE, m_tLtcDisplayParams.nWS28xxDisplayType == static_cast<uint8_t>(ltcdisplayrgb::WS28xxType::SEGMENT) ? "7segment" : "matrix" , isMaskSet(LtcDisplayParamsMask::WS28XX_DISPLAY_TYPE));
 	builder.Add(DevicesParamsConst::LED_TYPE, WS28xx::GetLedTypeString(static_cast<TWS28XXType>(m_tLtcDisplayParams.nWS28xxLedType)), isMaskSet(LtcDisplayParamsMask::WS28XX_LED_TYPE));
 
 	builder.AddComment("Overwrite datasheet");

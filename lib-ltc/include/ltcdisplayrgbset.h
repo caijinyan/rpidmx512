@@ -32,15 +32,14 @@
 
 #include "rgbmapping.h"
 
-enum TLtcDisplayMessage {
-	LTCDISPLAY_MAX_MESSAGE_SIZE = 8
-};
-
-struct TLtcDisplayRgbColours {
+namespace ltcdisplayrgb {
+struct Colours {
 	uint8_t nRed;
 	uint8_t nGreen;
 	uint8_t nBlue;
 };
+static constexpr auto MAX_MESSAGE_SIZE = 8;
+}  // namespace ltcdisplayrgb
 
 class LtcDisplayRgbSet {
 public:
@@ -49,15 +48,15 @@ public:
 	virtual void Init(TWS28XXType tLedType, TRGBMapping tRGBMapping);
 	virtual void Init();
 
-	virtual void Show(const char *pTimecode, struct TLtcDisplayRgbColours &tColours, struct TLtcDisplayRgbColours &tColoursColons)=0;
-	virtual void ShowSysTime(const char *pSystemTime, struct TLtcDisplayRgbColours &tColours, struct TLtcDisplayRgbColours &tColoursColons)=0;
-	virtual void ShowMessage(const char *pMessage, struct TLtcDisplayRgbColours &tColours)=0;
+	virtual void Show(const char *pTimecode, struct ltcdisplayrgb::Colours &tColours, struct ltcdisplayrgb::Colours &tColoursColons)=0;
+	virtual void ShowSysTime(const char *pSystemTime, struct ltcdisplayrgb::Colours &tColours, struct ltcdisplayrgb::Colours &tColoursColons)=0;
+	virtual void ShowMessage(const char *pMessage, struct ltcdisplayrgb::Colours &tColours)=0;
 
-	virtual void WriteChar(uint8_t nChar, uint8_t nPos, struct TLtcDisplayRgbColours &tColours)=0;
+	virtual void WriteChar(uint8_t nChar, uint8_t nPos, struct ltcdisplayrgb::Colours &tColours)=0;
 
-	virtual void ShowFPS(ltc::type tTimeCodeType, struct TLtcDisplayRgbColours &tColours);
-	virtual void ShowSource(ltc::source tSource, struct TLtcDisplayRgbColours &tColours);
-	virtual void ShowInfo(const char *pInfo, uint32_t nLength, struct TLtcDisplayRgbColours &tColours);
+	virtual void ShowFPS(ltc::type tTimeCodeType, struct ltcdisplayrgb::Colours &tColours);
+	virtual void ShowSource(ltc::source tSource, struct ltcdisplayrgb::Colours &tColours);
+	virtual void ShowInfo(const char *pInfo, uint32_t nLength, struct ltcdisplayrgb::Colours &tColours);
 
 	virtual void Print()=0;
 };

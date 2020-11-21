@@ -40,7 +40,7 @@ private:
 	enum State {
 		IDLE, EDIT
 	} m_State{IDLE};
-	bool m_bCursorOn { false };
+	bool m_bCursorOn {false};
 };
 
 #endif /* DISPLAYEDITFPS_H_ */

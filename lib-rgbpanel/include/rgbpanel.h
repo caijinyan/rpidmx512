@@ -20,9 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/**
- * PoC
- */
 
 #ifndef RGBPANEL_H_
 #define RGBPANEL_H_
@@ -37,7 +34,7 @@ static constexpr auto PWM_WIDTH = 84;
 
 class RgbPanel {
 public:
-	RgbPanel(uint32_t nColumns, uint32_t nRows, uint32_t nChain = rgbpanel::defaults::CHAIN, RgbPanelTypes type = rgbpanel::defaults::TYPE);
+	RgbPanel(uint32_t nColumns, uint32_t nRows, uint32_t nChain = rgbpanel::defaults::CHAIN, rgbpanel::Types type = rgbpanel::defaults::TYPE);
 	~RgbPanel() {
 		PlatformCleanUp();
 	}
@@ -61,7 +58,7 @@ public:
 	void TextLine(uint8_t nLine, const char *pText, uint8_t nLength, uint8_t nRed, uint8_t nGreen, uint8_t nBlue);
 	void SetCursorPos(uint8_t nCol, uint8_t nRow);
 	void ClearLine(uint8_t nLine);
-	void SetColon(uint8_t nChar, uint8_t nCol, uint8_t nRow, uint8_t nRed, uint8_t nGreen, uint8_t nBlue);
+	void SetColon(char nChar, uint8_t nCol, uint8_t nRow, uint8_t nRed, uint8_t nGreen, uint8_t nBlue);
 	void SetColonsOff();
 
 	uint32_t GetMaxPosition() {
@@ -76,8 +73,8 @@ public:
 
 	static uint32_t ValidateColumns(uint32_t nColumns);
 	static uint32_t ValidateRows(uint32_t nRows);
-	static RgbPanelTypes GetType(const char *pType);
-	static const char *GetType(RgbPanelTypes tType);
+	static rgbpanel::Types GetType(const char *pType);
+	static const char *GetType(rgbpanel::Types tType);
 
 private:
 	void PlatformInit();
@@ -89,7 +86,7 @@ protected:
 
 private:
 	uint32_t m_nChain;
-	RgbPanelTypes m_tType;
+	rgbpanel::Types m_tType;
 	bool m_bIsStarted{false};
 	// Text
 	uint32_t m_nMaxPosition;

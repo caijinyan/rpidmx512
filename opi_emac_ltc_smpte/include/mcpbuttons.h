@@ -49,7 +49,7 @@ public:
 	bool Check();
 	bool Wait(ltc::source& tLtcReaderSource, TLtcTimeCode& StartTimeCode, TLtcTimeCode& StopTimeCode);
 
-	bool IsConnected() {
+	bool IsConnected() const {
 		return m_bIsConnected;
 	}
 

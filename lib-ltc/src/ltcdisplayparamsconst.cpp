@@ -28,6 +28,8 @@
 #include "ltcdisplayparamsconst.h"
 #include "ltcdisplayrgb.h"
 
+using namespace ltcdisplayrgb;
+
 const char LtcDisplayParamsConst::FILE_NAME[] = "ldisplay.txt";
 
 const char LtcDisplayParamsConst::MAX7219_TYPE[] = "max7219_type";
@@ -39,12 +41,14 @@ const char LtcDisplayParamsConst::MAX7219_INTENSITY[] = "max7219_intensity";
 
 const char LtcDisplayParamsConst::INTENSITY[] = "intensity";
 const char LtcDisplayParamsConst::COLON_BLINK_MODE[] = "colon_blink_mode";
-const char LtcDisplayParamsConst::COLOUR[static_cast<uint32_t>(LtcDisplayRgbColourIndex::LAST)][24] =
-	{ "colour_segment",
+const char LtcDisplayParamsConst::COLOUR[static_cast<uint32_t>(ColourIndex::LAST)][24] =
+	{ "colour_time",
 	  "colour_colon",
 	  "colour_message",
-	  "colour_info",		// RGB panel specific
-	  "colour_source" };	// RGB panel specific
+	  "colour_fps",		// RGB panel specific
+	  "colour_info",	// RGB panel specific
+	  "colour_source"	// RGB panel specific
+	};
 
 /**
  * WS28xx specific

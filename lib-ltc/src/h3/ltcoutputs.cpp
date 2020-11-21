@@ -23,7 +23,6 @@
  * THE SOFTWARE.
  */
 
-#include <ltcdisplayrgb.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
@@ -48,6 +47,7 @@
 #include "ltc7segment.h"
 #include "display.h"
 #include "ltcdisplaymax7219.h"
+#include "ltcdisplayrgb.h"
 
 // IRQ Timer1
 static volatile bool IsMidiQuarterFrameMessage = false;
@@ -61,7 +61,8 @@ LtcOutputs *LtcOutputs::s_pThis = nullptr;
 using namespace ltc;
 
 LtcOutputs::LtcOutputs(struct TLtcDisabledOutputs *pLtcDisabledOutputs, source tSource, bool bShowSysTime):
-	m_ptLtcDisabledOutputs(pLtcDisabledOutputs), m_bShowSysTime(bShowSysTime)
+	m_ptLtcDisabledOutputs(pLtcDisabledOutputs),
+	m_bShowSysTime(bShowSysTime)
 {
 	assert(pLtcDisabledOutputs != nullptr);
 
@@ -75,6 +76,7 @@ LtcOutputs::LtcOutputs(struct TLtcDisabledOutputs *pLtcDisabledOutputs, source t
 	// Display's
 	pLtcDisabledOutputs->bRgbPanel |= ((tSource == source::LTC) || (tSource == source::MIDI));
 	pLtcDisabledOutputs->bMax7219 |= (!pLtcDisabledOutputs->bWS28xx || !pLtcDisabledOutputs->bRgbPanel);
+	pLtcDisabledOutputs->bOled |= (!pLtcDisabledOutputs->bRgbPanel);
 	//
 	pLtcDisabledOutputs->bMidi |= (!pLtcDisabledOutputs->bRgbPanel);
 	pLtcDisabledOutputs->bLtc |= (!pLtcDisabledOutputs->bRgbPanel);

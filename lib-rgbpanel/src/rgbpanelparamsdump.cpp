@@ -54,7 +54,7 @@ void RgbPanelParams::Dump() {
 	}
 
 	if (isMaskSet(RgbPanelParamsMask::TYPE)) {
-		printf(" %s=%d [%s]\n", RgbPanelParamsConst::TYPE, m_tRgbPanelParams.nType, RgbPanel::GetType(static_cast<RgbPanelTypes>(m_tRgbPanelParams.nType)));
+		printf(" %s=%d [%s]\n", RgbPanelParamsConst::TYPE, m_tRgbPanelParams.nType, RgbPanel::GetType(static_cast<Types>(m_tRgbPanelParams.nType)));
 	}
 #endif
 }

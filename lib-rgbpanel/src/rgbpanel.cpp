@@ -20,9 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/**
- * PoC
- */
 
 #include <cassert>
 #include <algorithm>
@@ -37,7 +34,7 @@
 
 using namespace rgbpanel;
 
-RgbPanel::RgbPanel(uint32_t nColumns, uint32_t nRows, uint32_t nChain, RgbPanelTypes tType):
+RgbPanel::RgbPanel(uint32_t nColumns, uint32_t nRows, uint32_t nChain, Types tType):
 	m_nColumns(nColumns),
 	m_nRows(nRows),
 	m_nChain(nChain != 0 ? nChain : 1),
@@ -173,7 +170,7 @@ void RgbPanel::SetCursorPos(uint8_t nCol, uint8_t nRow) {
 	m_nLine = nRow;
 }
 
-void RgbPanel::SetColon(uint8_t nChar, uint8_t nCol, uint8_t nRow, uint8_t nRed, uint8_t nGreen, uint8_t nBlue) {
+void RgbPanel::SetColon(char nChar, uint8_t nCol, uint8_t nRow, uint8_t nRed, uint8_t nGreen, uint8_t nBlue) {
 	if (__builtin_expect(((nCol >= m_nMaxPosition) || (nRow >= m_nMaxLine)), 0)) {
 		return;
 	}

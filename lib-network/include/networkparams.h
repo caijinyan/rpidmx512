@@ -41,8 +41,6 @@ struct TNetworkParams {
 	uint32_t nNtpServerIp;
 	float fNtpUtcOffset;
 };
-//	uint8_t nPtpEnable;
-//	uint8_t nPtpDomain;
 //}__attribute__((packed));
 
 static_assert(sizeof(struct TNetworkParams) <= 96, "struct TNetworkParams is too large");

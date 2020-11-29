@@ -46,6 +46,7 @@ struct TLtcDisplayParams {
 	uint32_t aDisplayRgbColour[static_cast<uint32_t>(ltcdisplayrgb::ColourIndex::LAST)]; // 35	6 * 4 = 24
 	uint8_t nWS28xxDisplayType;			// 36
 	char aInfoMessage[8];				// 44
+	uint8_t nOledIntensity;				// 45
 } __attribute__((packed));
 
 static_assert(sizeof(struct TLtcDisplayParams) <= 64, "struct TLtcDisplayParams is too large");
@@ -60,7 +61,8 @@ struct LtcDisplayParamsMask {
 	static constexpr auto DISPLAYRGB_COLON_BLINK_MODE = (1U << 6);
 	static constexpr auto WS28XX_DISPLAY_TYPE = (1U << 7);
 	static constexpr auto INFO_MSG = (1U << 8);
-	static constexpr auto DISLAYRGB_COLOUR_INDEX = (1U << 9);	// This must be the last one
+	static constexpr auto OLED_INTENSITY = (1U << 9);
+	static constexpr auto DISLAYRGB_COLOUR_INDEX = (1U << 10);	// This must be the last one
 };
 
 class LtcDisplayParamsStore {
@@ -105,6 +107,10 @@ public:
 	const char *GetInfoMessage(uint32_t &nLength) const {
 		nLength = sizeof(m_tLtcDisplayParams.aInfoMessage);
 		return m_tLtcDisplayParams.aInfoMessage;
+	}
+
+	uint8_t GetOledIntensity() const {
+		return m_tLtcDisplayParams.nOledIntensity;
 	}
 
     static void staticCallbackFunction(void *p, const char *s);

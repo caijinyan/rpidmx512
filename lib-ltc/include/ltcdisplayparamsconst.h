@@ -28,10 +28,20 @@
 
 #include <stdint.h>
 
-#include <ltcdisplayrgb.h>
+#include "ltcdisplayrgb.h"
 
 struct LtcDisplayParamsConst {
 	static const char FILE_NAME[];
+
+	/**
+	 * OLED SSD1306 / SSD1311
+	 */
+
+	static const char OLED_INTENSITY[];
+
+	/**
+	 * MAX7219 7-segment / matrix
+	 */
 
 	static const char MAX7219_TYPE[];
 	static const char MAX7219_INTENSITY[];
@@ -55,7 +65,6 @@ struct LtcDisplayParamsConst {
 	 */
 
 	static const char INFO_MSG[];
-
 };
 
 #endif /* LTCDISPLAYPARAMSCONST_H_ */

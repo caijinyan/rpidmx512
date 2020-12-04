@@ -83,5 +83,9 @@ void LtcDisplayParams::Dump() {
 	if (isMaskSet(LtcDisplayParamsMask::OLED_INTENSITY)) {
 		printf(" %s=%d\n", LtcDisplayParamsConst::OLED_INTENSITY, m_tLtcDisplayParams.nOledIntensity);
 	}
+
+	if (isMaskSet(LtcDisplayParamsMask::ROTARY_FULLSTEP)) {
+		printf(" %s=%d\n", LtcDisplayParamsConst::ROTARY_FULLSTEP, m_tLtcDisplayParams.nRotaryFullStep);
+	}
 #endif
 }

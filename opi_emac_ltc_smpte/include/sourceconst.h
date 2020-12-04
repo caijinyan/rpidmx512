@@ -1,5 +1,5 @@
 /**
- * @file rotaryencoder.h
+ * @file sourceconst.h
  *
  */
 /* Copyright (C) 2019-2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
@@ -23,27 +23,13 @@
  * THE SOFTWARE.
  */
 
-#ifndef ROTARYENCODER_H_
-#define ROTARYENCODER_H_
+#ifndef SOURCESELECTCONST_H_
+#define SOURCESELECTCONST_H_
 
-#include <stdint.h>
+#include "ltc.h"
 
-class RotaryEncoder {
-public:
-	static constexpr uint8_t NONE = 0x00;
-	static constexpr uint8_t CW = 0x10;
-	static constexpr uint8_t CCW = 0x20;
-
-	RotaryEncoder(bool bHalfStep = true);
-	~RotaryEncoder() {
-
-	}
-
-	uint8_t Process(uint8_t nInputAB);
-
-private:
-	bool m_bHalfStep;
-	uint8_t m_nState{0};
+struct SourceConst {
+	static const char SOURCE[ltc::source::UNDEFINED][12];
 };
 
-#endif /* ROTARYENCODER_H_ */
+#endif /* SOURCESELECTCONST_H_ */

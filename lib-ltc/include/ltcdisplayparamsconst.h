@@ -40,6 +40,12 @@ struct LtcDisplayParamsConst {
 	static const char OLED_INTENSITY[];
 
 	/**
+	 * Rotary control
+	 */
+
+	static const char ROTARY_FULLSTEP[];
+
+	/**
 	 * MAX7219 7-segment / matrix
 	 */
 

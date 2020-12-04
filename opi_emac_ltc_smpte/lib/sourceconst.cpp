@@ -1,5 +1,5 @@
 /**
- * @file mcpbuttonsconst.h
+ * @file sourceconst.cpp
  *
  */
 /* Copyright (C) 2019-2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
@@ -23,13 +23,18 @@
  * THE SOFTWARE.
  */
 
-#ifndef SOURCESELECTCONST_H_
-#define SOURCESELECTCONST_H_
-
 #include "ltc.h"
 
-struct McpButtonsConst {
-	static const char SOURCE[ltc::source::UNDEFINED][12];
-};
+#include "sourceconst.h"
 
-#endif /* SOURCESELECTCONST_H_ */
+const char SourceConst::SOURCE[ltc::source::UNDEFINED][12] =
+	{
+		"LTC",
+		"Art-Net",
+		"MIDI",
+		"TCNet",
+		"Internal",
+		"rtpMIDI",
+		"System-Time"
+	};
+

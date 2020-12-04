@@ -54,6 +54,7 @@ using namespace ltcdisplayrgb;
 namespace defaults {
 static constexpr auto OLED_INTENSITY = 0x7F;
 static constexpr auto MAX7219_INTENSITY = 0x04;
+static constexpr auto ROTARY_FULLSTEP = 0x00;
 }  // namespace defaults
 
 LtcDisplayParams::LtcDisplayParams(LtcDisplayParamsStore *pLtcDisplayParamsStore): m_pLtcDisplayParamsStore(pLtcDisplayParamsStore) {
@@ -74,6 +75,7 @@ LtcDisplayParams::LtcDisplayParams(LtcDisplayParamsStore *pLtcDisplayParamsStore
 	m_tLtcDisplayParams.nWS28xxDisplayType = static_cast<uint8_t>(WS28xxType::SEGMENT);
 	memset(m_tLtcDisplayParams.aInfoMessage, ' ', sizeof(m_tLtcDisplayParams.aInfoMessage));
 	m_tLtcDisplayParams.nOledIntensity = defaults::OLED_INTENSITY;
+	m_tLtcDisplayParams.nRotaryFullStep = defaults::ROTARY_FULLSTEP;
 }
 
 bool LtcDisplayParams::Load() {
@@ -128,6 +130,17 @@ void LtcDisplayParams::callbackFunction(const char *pLine) {
 			m_tLtcDisplayParams.nSetList |= LtcDisplayParamsMask::OLED_INTENSITY;
 		} else {
 			m_tLtcDisplayParams.nSetList &= ~LtcDisplayParamsMask::OLED_INTENSITY;
+		}
+		return;
+	}
+
+	if (Sscan::Uint8(pLine, LtcDisplayParamsConst::ROTARY_FULLSTEP, nValue8) == Sscan::OK) {
+		m_tLtcDisplayParams.nRotaryFullStep = (nValue8 != 0);
+
+		if (nValue8 != defaults::ROTARY_FULLSTEP) {
+			m_tLtcDisplayParams.nSetList |= LtcDisplayParamsMask::ROTARY_FULLSTEP;
+		} else {
+			m_tLtcDisplayParams.nSetList &= ~LtcDisplayParamsMask::ROTARY_FULLSTEP;
 		}
 		return;
 	}

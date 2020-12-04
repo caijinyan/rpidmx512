@@ -39,6 +39,12 @@ const char LtcDisplayParamsConst::FILE_NAME[] = "ldisplay.txt";
 const char LtcDisplayParamsConst::OLED_INTENSITY[] = "oled_intensity";
 
 /**
+ * Rotary control
+ */
+
+const char LtcDisplayParamsConst::ROTARY_FULLSTEP[] = "rotary_fullstep";
+
+/**
  * MAX7219 7-segment / matrix
  */
 

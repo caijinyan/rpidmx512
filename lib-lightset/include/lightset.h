@@ -28,8 +28,6 @@
 
 #include <stdint.h>
 
-#include "lightsetdisplay.h"
-
 #include "debug.h"
 
 struct TLightSetSlotInfo {
@@ -49,6 +47,23 @@ enum TLightSetOutputType {
 	LIGHTSET_OUTPUT_TYPE_SPI,
 	LIGHTSET_OUTPUT_TYPE_MONITOR,
 	LIGHTSET_OUTPUT_TYPE_UNDEFINED
+};
+
+class LightSetDisplay {
+public:
+	virtual ~LightSetDisplay() {
+	}
+
+	virtual void ShowDmxStartAddress()=0;
+};
+
+class LightSetHandler {
+public:
+	virtual ~LightSetHandler() {
+	}
+
+	virtual void Start()=0;
+	virtual void Stop()=0;
 };
 
 class LightSet {
@@ -71,6 +86,12 @@ public:
 		DEBUG_EXIT
 	}
 
+	void SetLightSetHandler(LightSetHandler *pLightSetHandler) {
+		DEBUG_ENTRY
+		m_pLightSetHandler = pLightSetHandler;
+		DEBUG_EXIT
+	}
+
 	// RDM Optional
 	virtual bool SetDmxStartAddress(uint16_t nDmxStartAddress);
 	virtual uint16_t GetDmxStartAddress();
@@ -87,6 +108,7 @@ public:
 
 protected:
 	LightSetDisplay *m_pLightSetDisplay{nullptr};
+	LightSetHandler *m_pLightSetHandler{nullptr};
 
 private:
 	static LightSet *s_pThis;

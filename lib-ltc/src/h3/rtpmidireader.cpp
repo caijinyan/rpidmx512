@@ -105,6 +105,11 @@ void RtpMidiReader::MidiMessage(const struct _midi_message *ptMidiMessage) {
 			HandleMtc(ptMidiMessage);
 			isMtc = true;
 		}
+	} else if (ptMidiMessage->type == MIDI_TYPES_CLOCK) {
+		uint32_t nBPM;
+		if (m_MidiBPM.Get(ptMidiMessage->timestamp, nBPM)) {
+			LtcOutputs::Get()->ShowBPM(nBPM);
+		}
 	}
 
 	if (isMtc) {

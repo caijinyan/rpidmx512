@@ -185,32 +185,29 @@ void LtcOutputs::ShowSysTime() {
 }
 
 void LtcOutputs::ShowBPM(uint32_t nBPM) {
-	if (nBPM == 0) {
-		if (!m_ptLtcDisabledOutputs->bOled) {
-			Display::Get()->SetCursorPos(Display::Get()->getCols() - 3, 1);
-			Display::Get()->PutString("---");
-		}
-
-		return;
-	}
-
-	m_cBPM[7] = nBPM % 10 + '0';
-	nBPM /= 10;
-
-	const uint32_t nDigit = nBPM % 10;
-
-	if (nDigit != 0) {
-		m_cBPM[6] = nDigit + '0';
+	if ((nBPM < midi::bpm::MIN) || (nBPM > midi::bpm::MAX)) {
+		m_cBPM[5] = '-';
+		m_cBPM[6] = '-';
+		m_cBPM[7] = '-';
+	} else {
+		m_cBPM[7] = nBPM % 10 + '0';
 		nBPM /= 10;
 		const uint32_t nDigit = nBPM % 10;
-		if (nDigit != 0) {
-			m_cBPM[5] = nDigit + '0';
+
+		if (nBPM != 0) {
+			m_cBPM[6] = nDigit + '0';
+			nBPM /= 10;
+			const uint32_t nDigit = nBPM % 10;
+
+			if (nBPM != 0) {
+				m_cBPM[5] = nDigit + '0';
+			} else {
+				m_cBPM[5] = ' ';
+			}
 		} else {
+			m_cBPM[6] = ' ';
 			m_cBPM[5] = ' ';
 		}
-	} else {
-		m_cBPM[6] = ' ';
-		m_cBPM[5] = ' ';
 	}
 
 	if (!m_ptLtcDisabledOutputs->bOled) {

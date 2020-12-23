@@ -1,8 +1,8 @@
 /**
- * @file rtpmidi.h
+ * @file ltcmidisystemrealtime.h
  *
  */
-/* Copyright (C) 2019-2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,57 +23,38 @@
  * THE SOFTWARE.
  */
 
-#ifndef RTPMIDI_H_
-#define RTPMIDI_H_
+#ifndef LTCMIDISYSTEMREALTIME_H_
+#define LTCMIDISYSTEMREALTIME_H_
 
-#include <stdint.h>
-
-#include "applemidi.h"
-#include "midi.h"
-
-#include "rtpmidihandler.h"
-
-class RtpMidi: public AppleMidi {
+class LtcMidiSystemRealtime {
 public:
-	RtpMidi();
+	LtcMidiSystemRealtime(struct TLtcDisabledOutputs *ptLtcDisabledOutputs);
+	~LtcMidiSystemRealtime() {}
 
 	void Start();
 	void Stop();
-
 	void Run();
 
-	void SendRaw(uint8_t nByte);
+	void SendStart();
+	void SendStop();
+	void SendContinue();
 
-	void SendTimeCode(const struct _midi_send_tc *tTimeCode);
+	void SetBPM(uint32_t nBPM);
 
-	void SetHandler(RtpMidiHandler *pRtpMidiHandler) {
-		m_pRtpMidiHandler = pRtpMidiHandler;
-	}
-
-	void Print();
-
-	static RtpMidi* Get() {
+	static LtcMidiSystemRealtime *Get() {
 		return s_pThis;
 	}
 
 private:
-	void HandleRtpMidi(const uint8_t *pBuffer) override;
-
-	int32_t DecodeTime(uint32_t nCommandLength, uint32_t nOffset);
-	int32_t DecodeMidi(uint32_t nCommandLength, uint32_t nOffset);
-	uint8_t GetTypeFromStatusByte(uint8_t nStatusByte);
-	uint8_t GetChannelFromStatusByte(uint8_t nStatusByte);
-
-	void Send(uint32_t nLength);
+	void Send(uint8_t nByte);
+	void ShowBPM(uint32_t nBPM);
 
 private:
-	struct _midi_message m_tMidiMessage;
-	RtpMidiHandler *m_pRtpMidiHandler{nullptr};
-	uint8_t *m_pReceiveBuffer{nullptr};
-	uint8_t *m_pSendBuffer{nullptr};
-	uint16_t m_nSequenceNumber{0};
+	int m_nHandle{-1};
+	uint8_t m_Buffer[64];
+	uint32_t m_nBPMPrevious{999};
 
-	static RtpMidi *s_pThis;
+	static LtcMidiSystemRealtime *s_pThis;
 };
 
-#endif /* RTPMIDI_H_ */
+#endif /* LTCMIDISYSTEMREALTIME_H_ */

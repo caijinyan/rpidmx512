@@ -248,6 +248,12 @@ void RtpMidi::HandleRtpMidi(const uint8_t *pBuffer) {
 	DEBUG_EXIT
 }
 
+void RtpMidi::SendRaw(uint8_t nByte) {
+	auto *data = &m_pSendBuffer[RTP_MIDI_COMMAND_OFFSET + 1];
+	data[0] = nByte;
+	Send(1);
+}
+
 void RtpMidi::SendTimeCode(const struct _midi_send_tc *tTimeCode) {
 	auto *data = &m_pSendBuffer[RTP_MIDI_COMMAND_OFFSET + 1];
 

@@ -1,5 +1,5 @@
 /**
- * @file midibpm.h
+ * @file ltcmidisystemrealtime.cpp
  *
  */
 /* Copyright (C) 2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
@@ -23,58 +23,12 @@
  * THE SOFTWARE.
  */
 
-#ifndef MIDIBPM_H_
-#define MIDIBPM_H_
-
 #include <stdint.h>
 
-class MidiBPM {
-public:
-	bool Get(uint32_t nTimeStamp, uint32_t &nBPM) {
-		m_nBpmDelta[m_nBpmClockCounter] = nTimeStamp - m_nBpmTimeStampPrevious;
+#include "ltcmidisystemrealtime.h"
 
-		if (m_nBpmDelta[m_nBpmClockCounter] == 0) {
-			return false;
-		}
+#include "h3/ltcoutputs.h"
 
-		m_nBpmTimeStampPrevious = nTimeStamp;
-
-		if (++m_nBpmClockCounter == 24) {
-			m_nBpmClockCounter = 0;
-
-			uint32_t nDelta = 0;
-			uint32_t nCount = 0;
-
-			for (uint32_t i = 1; i < 24; i++) {
-				const uint32_t nDiff = m_nBpmDelta[i] - m_nBpmDelta[i - 1];
-
-				if (nDiff <= 1) {
-					nDelta += m_nBpmDelta[i];
-					nCount++;
-				}
-			}
-
-			if (nCount == 0) {
-				return false;
-			}
-
-			const float fBPM = static_cast<float>(25000 * nCount) / nDelta;	// 25000 = 600000 / 24
-			nBPM = static_cast<uint32_t>(fBPM + .5);
-
-			if (nBPM != m_nBpmPrevious) {
-				m_nBpmPrevious = nBPM;
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-private:
-	uint32_t m_nBpmPrevious{0};
-	uint32_t m_nBpmTimeStampPrevious{0};
-	uint32_t m_nBpmClockCounter{0};
-	uint32_t m_nBpmDelta[24];
-};
-
-#endif /* MIDIBPM_H_ */
+void LtcMidiSystemRealtime::ShowBPM(uint32_t nBPM) {
+	LtcOutputs::Get()->ShowBPM(nBPM);
+}

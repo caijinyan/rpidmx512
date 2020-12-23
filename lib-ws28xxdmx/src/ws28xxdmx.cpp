@@ -23,13 +23,15 @@
  * THE SOFTWARE.
  */
 
+#undef NDEBUG
+
 #include <stdint.h>
 #include <algorithm>
 #include <cassert>
 
 #ifndef NDEBUG
 #if (__linux__)
- #include <stdio.h>
+# include <stdio.h>
 #endif
 #endif
 
@@ -65,6 +67,10 @@ void WS28xxDmx::Start(__attribute__((unused)) uint8_t nPort) {
 		}
 		m_pWS28xx->Update();
 	}
+
+	if (m_pLightSetHandler != nullptr) {
+		m_pLightSetHandler->Start();
+	}
 }
 
 void WS28xxDmx::Stop(__attribute__((unused)) uint8_t nPort) {
@@ -79,6 +85,10 @@ void WS28xxDmx::Stop(__attribute__((unused)) uint8_t nPort) {
 			// wait for completion
 		}
 		m_pWS28xx->Blackout();
+	}
+
+	if (m_pLightSetHandler != nullptr) {
+		m_pLightSetHandler->Stop();
 	}
 }
 

@@ -28,8 +28,6 @@
 
 #include <stdint.h>
 
-#include "debug.h"
-
 struct TLightSetSlotInfo {
 	uint8_t nType;
 	uint16_t nCategory;
@@ -81,15 +79,11 @@ public:
 	}
 
 	void SetLightSetDisplay(LightSetDisplay *pLightSetDisplay) {
-		DEBUG_ENTRY
 		m_pLightSetDisplay = pLightSetDisplay;
-		DEBUG_EXIT
 	}
 
 	void SetLightSetHandler(LightSetHandler *pLightSetHandler) {
-		DEBUG_ENTRY
 		m_pLightSetHandler = pLightSetHandler;
-		DEBUG_EXIT
 	}
 
 	// RDM Optional

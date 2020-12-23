@@ -462,7 +462,7 @@ void notmain(void) {
 	rdmNetLLRPOnly.Start();
 	rdmNetLLRPOnly.Print();
 
-	RemoteConfig remoteConfig(REMOTE_CONFIG_LTC, REMOTE_CONFIG_MODE_TIMECODE, 1 + ltcSource);
+	RemoteConfig remoteConfig(remoteconfig::Node::LTC, remoteconfig::Output::TIMECODE, 1U + ltcSource);
 	RemoteConfigParams remoteConfigParams(new StoreRemoteConfig);
 
 	if(remoteConfigParams.Load()) {

@@ -35,8 +35,6 @@
 #include "midi.h"
 #include "rtpmidi.h"
 
-#include "irq_timer.h"
-
 #include "network.h"
 
 #include "debug.h"
@@ -59,28 +57,6 @@ namespace udp {
 static constexpr auto PORT = 0x4444;
 }
 
-static struct TLtcDisabledOutputs *s_ptLtcDisabledOutputs;
-
-static void timer_handler() {
-	if (!s_ptLtcDisabledOutputs->bRtpMidi) {
-		RtpMidi::Get()->SendRaw(MIDI_TYPES_CLOCK);
-	}
-
-	if (!s_ptLtcDisabledOutputs->bMidi) {
-		Midi::Get()->SendRaw(MIDI_TYPES_CLOCK);
-	}
-}
-
-LtcMidiSystemRealtime *LtcMidiSystemRealtime::s_pThis = nullptr;
-
-LtcMidiSystemRealtime::LtcMidiSystemRealtime(struct TLtcDisabledOutputs *ptLtcDisabledOutputs) {
-	assert(ptLtcDisabledOutputs != nullptr);
-	s_ptLtcDisabledOutputs = ptLtcDisabledOutputs;
-
-	assert(s_pThis == nullptr);
-	s_pThis = this;
-}
-
 void LtcMidiSystemRealtime::SendStart() {
 	Send(MIDI_TYPES_START);
 }
@@ -91,30 +67,6 @@ void LtcMidiSystemRealtime::SendStop() {
 
 void LtcMidiSystemRealtime::SendContinue() {
 	Send(MIDI_TYPES_CONTINUE);
-}
-
-void LtcMidiSystemRealtime::SetBPM(uint32_t nBPM) {
-	if ((!s_ptLtcDisabledOutputs->bRtpMidi) || (!s_ptLtcDisabledOutputs->bMidi)) {
-		if (nBPM != m_nBPMPrevious) {
-			m_nBPMPrevious = nBPM;
-			if (nBPM == 0) {
-				irq_timer_arm_virtual_set(nullptr, 0);
-			} else if ((nBPM >= midi::bpm::MIN) && (nBPM <= midi::bpm::MAX)) {
-				const uint32_t nValue =  60000000 / nBPM;
-				irq_timer_arm_virtual_set(reinterpret_cast<thunk_irq_timer_arm_t>(timer_handler), nValue);
-			}
-		}
-	}
-}
-
-void LtcMidiSystemRealtime::Send(uint8_t nByte) {
-	if (!s_ptLtcDisabledOutputs->bRtpMidi) {
-		RtpMidi::Get()->SendRaw(nByte);
-	}
-
-	if (!s_ptLtcDisabledOutputs->bMidi) {
-		Midi::Get()->SendRaw(nByte);
-	}
 }
 
 void LtcMidiSystemRealtime::Start() {

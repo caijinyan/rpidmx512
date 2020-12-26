@@ -306,7 +306,7 @@ void notmain(void) {
 	Midi midi;
 
 	if ((ltcSource != ltc::source::MIDI) && (!tLtcDisabledOutputs.bMidi)) {
-		midi.Init(MIDI_DIRECTION_OUTPUT);
+		midi.Init(midi::Direction::OUTPUT);
 	}
 
 	if ((ltcSource == ltc::source::MIDI) || (!tLtcDisabledOutputs.bMidi)) {

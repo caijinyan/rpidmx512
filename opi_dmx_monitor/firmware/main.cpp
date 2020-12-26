@@ -60,7 +60,7 @@ void notmain(void) {
 
 	printf("DMX Real-time Monitor [V%s] Orange Pi One Compiled on %s at %s\n", SOFTWARE_VERSION, __DATE__, __TIME__);
 
-	hw.SetLed(HARDWARE_LED_ON);
+	hw.SetLed(hardware::LedStatus::ON);
 
 	DMXMonitor dmxmonitor;
 

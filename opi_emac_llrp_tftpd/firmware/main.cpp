@@ -68,7 +68,7 @@ void notmain(void) {
 
 	console_puts("RDMNet LLRP device only\n");
 
-	hw.SetLed(HARDWARE_LED_ON);
+	hw.SetLed(hardware::LedStatus::ON);
 	hw.SetRebootHandler(new Reboot);
 
 	display.TextStatus(NetworkConst::MSG_NETWORK_INIT, Display7SegmentMessage::INFO_NETWORK_INIT, CONSOLE_YELLOW);
@@ -114,7 +114,7 @@ void notmain(void) {
 
 	display.TextStatus("Device running", Display7SegmentMessage::INFO_NONE, CONSOLE_GREEN);
 
-	lb.SetMode(LEDBLINK_MODE_NORMAL);
+	lb.SetMode(ledblink::Mode::NORMAL);
 
 	for (;;) {
 		nw.Run();

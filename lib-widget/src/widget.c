@@ -48,7 +48,7 @@
 #include "usb.h"
 
 #ifndef ALIGNED
- #define ALIGNED __attribute__ ((aligned (4)))
+# define ALIGNED __attribute__ ((aligned (4)))
 #endif
 
 #define WIDGET_DATA_BUFFER_SIZE		600							///<

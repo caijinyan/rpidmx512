@@ -28,7 +28,6 @@
 #include <stdbool.h>
 
 #include "c/hardware.h"
-
 #include "monitor.h"
 
 #include "widget.h"
@@ -42,7 +41,7 @@
 #include "usb.h"
 
 #ifndef ALIGNED
- #define ALIGNED __attribute__ ((aligned (4)))
+# define ALIGNED __attribute__ ((aligned (4)))
 #endif
 
 #define	SNIFFER_PACKET			0x81	///< Label

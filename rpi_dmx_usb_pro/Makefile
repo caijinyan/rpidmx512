@@ -3,7 +3,7 @@ DEFINES = RDM_CONTROLLER UPDATE_CONFIG_FILE ENABLE_MMU NDEBUG
 #
 LIBS = widget dmx rdm usb
 #
-SRCDIR = firmware oled oled/i2c
+SRCDIR = firmware oled oled/i2c led hardware
 #
 EXTRA_INCLUDES = 
 

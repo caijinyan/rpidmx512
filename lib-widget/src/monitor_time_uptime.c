@@ -28,7 +28,7 @@
 #include <time.h>
 
 #include "console.h"
-#include "hardware.h"
+#include "c/hardware.h"
 
 void monitor_time_uptime(const int line) {
 	uint32_t uptime, days, hours, minutes, seconds;

@@ -28,21 +28,22 @@
 
 #include <stdint.h>
 
+class DmxMultiInput {
+public:
+	DmxMultiInput();
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+	void StartData(uint32_t port);
+	void StopData(uint32_t port);
 
-extern void dmx_multi_input_init(void);
+	const uint8_t* GetDmxAvailable(uint32_t port);
+	uint32_t GetUpdatesPerSeconde(uint32_t port);
 
-extern void dmx_multi_start_data(uint8_t port);
-extern void dmx_multi_stop_data(uint8_t port);
-
-extern const uint8_t *dmx_multi_get_available(uint8_t port);
-extern uint32_t dmx_multi_get_updates_per_seconde(uint8_t port);
-
-#ifdef __cplusplus
-}
-#endif
+private:
+	enum class UartState {
+		IDLE,
+		RX
+	} ;
+	UartState m_StateUart[4];
+};
 
 #endif /* DMX_MULTI_INPUT_H_ */

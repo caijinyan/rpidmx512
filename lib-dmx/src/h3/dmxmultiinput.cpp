@@ -1,5 +1,5 @@
 /**
- * @file dmx_multi_input.c
+ * @file dmx_multiinput.cpp
  *
  */
 /* Copyright (C) 2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
@@ -27,6 +27,9 @@
 #include <string.h>
 #include <assert.h>
 
+#include "h3/dmxmultiinput.h"
+#include "h3/dmxmulti.h"
+
 #include "h3_gpio.h"
 #include "h3_timer.h"
 
@@ -44,64 +47,57 @@
 #include "dmx_uarts.h"
 #include "dmx_multi_internal.h"
 
-extern void console_error(const char *);
+extern "C" {
+ int console_error(const char *);
+}
 
-extern void dmx_multi_uart_init(uint8_t uart);
-
-typedef enum {
-	UART_STATE_IDLE,
-	UART_STATE_RX
-} _uart_state;
-
-typedef enum {
+enum class DmxState {
 	IDLE,
 	PRE_BREAK,
 	BREAK,
 	DATA
-} _dmx_state;
+} ;
 
 #ifndef ALIGNED
 # define ALIGNED __attribute__ ((aligned (4)))
 #endif
 
-static _uart_state uart_state[4] ALIGNED;
-
-static volatile _dmx_state dmx_receive_state[4] ALIGNED;
+static volatile DmxState s_DmxReceiveState[DMX_MAX_IN] ALIGNED;
 //
-static volatile struct _dmx_data dmx_data[4][DMX_DATA_BUFFER_INDEX_ENTRIES] ALIGNED;
-static volatile uint32_t dmx_data_buffer_index_head[4] ALIGNED;
-static volatile uint32_t dmx_data_buffer_index_tail[4] ALIGNED;
-static volatile uint32_t dmx_data_index[4];
+static volatile struct _dmx_data s_aDmxData[DMX_MAX_IN][DMX_DATA_BUFFER_INDEX_ENTRIES] ALIGNED;
+static volatile uint32_t s_nDmxDataBufferIndexHead[DMX_MAX_IN] ALIGNED;
+static volatile uint32_t s_nDmxDataBufferIndexTail[DMX_MAX_IN] ALIGNED;
+static volatile uint32_t s_nDmxDataIndex[DMX_MAX_IN];
 //
-static volatile uint32_t dmx_updates_per_second[4] ALIGNED;
-static volatile uint32_t dmx_packets[4] ALIGNED;
-static volatile uint32_t dmx_packets_previous[4] ALIGNED;
+static volatile uint32_t s_nDmxUpdatesPerSecond[DMX_MAX_IN] ALIGNED;
+static volatile uint32_t s_nDmxPackets[DMX_MAX_IN] ALIGNED;
+static volatile uint32_t s_nDmxPacketsPrevious[DMX_MAX_IN] ALIGNED;
 
-const uint8_t *dmx_multi_get_available(uint8_t port)  {
+const uint8_t *DmxMultiInput::GetDmxAvailable(uint32_t port)  {
 	const uint32_t uart = _port_to_uart(port);
 
 	dmb();
-	if (dmx_data_buffer_index_head[uart] == dmx_data_buffer_index_tail[uart]) {
-		return NULL;
+	if (s_nDmxDataBufferIndexHead[uart] == s_nDmxDataBufferIndexTail[uart]) {
+		return nullptr;
 	} else {
-		const uint8_t *p = (const uint8_t *)dmx_data[uart][dmx_data_buffer_index_tail[uart]].data;
-		dmx_data_buffer_index_tail[uart] = (dmx_data_buffer_index_tail[uart] + 1) & DMX_DATA_BUFFER_INDEX_MASK;
+		const auto *p = const_cast<const uint8_t *>(s_aDmxData[uart][s_nDmxDataBufferIndexTail[uart]].data);
+		s_nDmxDataBufferIndexTail[uart] = (s_nDmxDataBufferIndexTail[uart] + 1) & DMX_DATA_BUFFER_INDEX_MASK;
 		return p;
 	}
 }
 
-uint32_t dmx_multi_get_updates_per_seconde(uint8_t port) {
+uint32_t DmxMultiInput::GetUpdatesPerSeconde(uint32_t port) {
 	const uint32_t uart = _port_to_uart(port);
 
 	dmb();
-	return dmx_updates_per_second[uart];
+	return s_nDmxUpdatesPerSecond[uart];
 }
 
 void fiq_dmx_in_handler(uint8_t uart, const H3_UART_TypeDef *u, uint32_t iir) {
 	isb();
 
 	if ((u->LSR & UART_LSR_BI) == UART_LSR_BI) {
-		dmx_receive_state[uart] = PRE_BREAK;
+		s_DmxReceiveState[uart] = DmxState::PRE_BREAK;
 #ifdef LOGIC_ANALYZER
 		h3_gpio_set(GPIO_ANALYZER_CH2);	// BREAK
 		h3_gpio_clr(GPIO_ANALYZER_CH3); // DATA
@@ -118,41 +114,41 @@ void fiq_dmx_in_handler(uint8_t uart, const H3_UART_TypeDef *u, uint32_t iir) {
 			;
 		uint8_t data = u->O00.RBR;
 
-		switch (dmx_receive_state[uart]) {
-		case IDLE:
+		switch (s_DmxReceiveState[uart]) {
+		case DmxState::IDLE:
 			return;
 			break;
-		case PRE_BREAK:
-			dmx_receive_state[uart] = BREAK;
+		case DmxState::PRE_BREAK:
+			s_DmxReceiveState[uart] = DmxState::BREAK;
 #ifdef LOGIC_ANALYZER
 			h3_gpio_clr(GPIO_ANALYZER_CH2);	// BREAK
 #endif
 			break;
-		case BREAK:
+		case DmxState::BREAK:
 			switch (data) {
 			case DMX512_START_CODE:
-				dmx_receive_state[uart] = DATA;
-				dmx_data[uart][dmx_data_buffer_index_head[uart]].data[0] = DMX512_START_CODE;
-				dmx_data_index[uart] = 1;
-				dmx_packets[uart]++;
+				s_DmxReceiveState[uart] = DmxState::DATA;
+				s_aDmxData[uart][s_nDmxDataBufferIndexHead[uart]].data[0] = DMX512_START_CODE;
+				s_nDmxDataIndex[uart] = 1;
+				s_nDmxPackets[uart]++;
 #ifdef LOGIC_ANALYZER
 				h3_gpio_set(GPIO_ANALYZER_CH3);	// DATA
 #endif
 				break;
 			default:
-				dmx_receive_state[uart] = IDLE;
+				s_DmxReceiveState[uart] = DmxState::IDLE;
 				return;
 				break;
 			}
 			break;
-		case DATA:
-			dmx_data[uart][dmx_data_buffer_index_head[uart]].data[dmx_data_index[uart]] = data;
-			dmx_data_index[uart]++;
+		case DmxState::DATA:
+			s_aDmxData[uart][s_nDmxDataBufferIndexHead[uart]].data[s_nDmxDataIndex[uart]] = data;
+			s_nDmxDataIndex[uart]++;
 
-			if (dmx_data_index[uart] > DMX_MAX_CHANNELS) {
-				dmx_receive_state[uart] = IDLE;
-				dmx_data[uart][dmx_data_buffer_index_head[uart]].statistics.slots_in_packet = DMX_MAX_CHANNELS;
-				dmx_data_buffer_index_head[uart] = (dmx_data_buffer_index_head[uart] + 1) & DMX_DATA_BUFFER_INDEX_MASK;
+			if (s_nDmxDataIndex[uart] > DMX_MAX_CHANNELS) {
+				s_DmxReceiveState[uart] = DmxState::IDLE;
+				s_aDmxData[uart][s_nDmxDataBufferIndexHead[uart]].statistics.slots_in_packet = DMX_MAX_CHANNELS;
+				s_nDmxDataBufferIndexHead[uart] = (s_nDmxDataBufferIndexHead[uart] + 1) & DMX_DATA_BUFFER_INDEX_MASK;
 #ifdef LOGIC_ANALYZER
 				h3_gpio_clr(GPIO_ANALYZER_CH3); // DATA
 				h3_gpio_clr(GPIO_ANALYZER_CH6); // CHL6
@@ -170,9 +166,9 @@ void fiq_dmx_in_handler(uint8_t uart, const H3_UART_TypeDef *u, uint32_t iir) {
 	}
 
 	if (((u->USR & UART_USR_BUSY) == 0) || ((iir & UART_IIR_IID_TIME_OUT) == UART_IIR_IID_TIME_OUT)) {
-		dmx_receive_state[uart] = IDLE;
-		dmx_data[uart][dmx_data_buffer_index_head[uart]].statistics.slots_in_packet = dmx_data_index[uart] - 1;
-		dmx_data_buffer_index_head[uart] = (dmx_data_buffer_index_head[uart] + 1) & DMX_DATA_BUFFER_INDEX_MASK;
+		s_DmxReceiveState[uart] = DmxState::IDLE;
+		s_aDmxData[uart][s_nDmxDataBufferIndexHead[uart]].statistics.slots_in_packet = s_nDmxDataIndex[uart] - 1;
+		s_nDmxDataBufferIndexHead[uart] = (s_nDmxDataBufferIndexHead[uart] + 1) & DMX_DATA_BUFFER_INDEX_MASK;
 		dmb();
 #ifdef LOGIC_ANALYZER
 		h3_gpio_clr(GPIO_ANALYZER_CH3); // DATA
@@ -193,7 +189,7 @@ static void __attribute__((interrupt("FIQ"))) fiq_dmx_multi_input(void) {
 #ifdef LOGIC_ANALYZER
 		h3_gpio_set(GPIO_ANALYZER_CH4);
 #endif
-		fiq_dmx_in_handler(1, (H3_UART_TypeDef *) H3_UART1_BASE, iir);
+		fiq_dmx_in_handler(1, reinterpret_cast<H3_UART_TypeDef *>(H3_UART1_BASE), iir);
 		H3_GIC_CPUIF->EOI = H3_UART1_IRQn;
 		gic_unpend(H3_UART1_IRQn);
 		isb();
@@ -207,7 +203,7 @@ static void __attribute__((interrupt("FIQ"))) fiq_dmx_multi_input(void) {
 #ifdef LOGIC_ANALYZER
 		h3_gpio_set(GPIO_ANALYZER_CH5);
 #endif
-		fiq_dmx_in_handler(2, (H3_UART_TypeDef *) H3_UART2_BASE, iir);
+		fiq_dmx_in_handler(2, reinterpret_cast<H3_UART_TypeDef *>(H3_UART2_BASE), iir);
 		H3_GIC_CPUIF->EOI = H3_UART2_IRQn;
 		gic_unpend(H3_UART2_IRQn);
 		isb();
@@ -219,7 +215,7 @@ static void __attribute__((interrupt("FIQ"))) fiq_dmx_multi_input(void) {
 #if defined (ORANGE_PI_ONE)
 	iir = H3_UART3->O08.IIR;
 	if (iir & UART_IIR_IID_RD) {
-		fiq_dmx_in_handler(3, (H3_UART_TypeDef *) H3_UART3_BASE, iir);
+		fiq_dmx_in_handler(3, reinterpret_cast<H3_UART_TypeDef *>(H3_UART3_BASE), iir);
 		H3_GIC_CPUIF->EOI = H3_UART3_IRQn;
 		gic_unpend(H3_UART3_IRQn);
 		isb();
@@ -227,7 +223,7 @@ static void __attribute__((interrupt("FIQ"))) fiq_dmx_multi_input(void) {
 
 	iir = H3_UART0->O08.IIR;
 	if (iir & UART_IIR_IID_RD) {
-		fiq_dmx_in_handler(0, (H3_UART_TypeDef *) H3_UART0_BASE, iir);
+		fiq_dmx_in_handler(0, reinterpret_cast<H3_UART_TypeDef *>(H3_UART0_BASE), iir);
 		H3_GIC_CPUIF->EOI = H3_UART0_IRQn;
 		gic_unpend(H3_UART0_IRQn);
 		isb();
@@ -241,24 +237,22 @@ static void __attribute__((interrupt("FIQ"))) fiq_dmx_multi_input(void) {
 }
 
 static void irq_timer1_dmx_receive(__attribute__((unused)) uint32_t clo) {
-	uint32_t i;
-
-	for (i = 0; i < 4; i++) {
-		dmb();
-		dmx_updates_per_second[i] = dmx_packets[i] - dmx_packets_previous[i];
-		dmx_packets_previous[i] = dmx_packets[i];
+	dmb();
+	for (uint32_t i = 0; i < DMX_MAX_IN; i++) {
+		s_nDmxUpdatesPerSecond[i] = s_nDmxPackets[i] - s_nDmxPacketsPrevious[i];
+		s_nDmxPacketsPrevious[i] = s_nDmxPackets[i];
 	}
 }
 
-void dmx_multi_start_data(uint8_t port) {
+void DmxMultiInput::StartData(uint32_t port) {
 	const uint32_t uart = _port_to_uart(port);
 
-	if (uart_state[uart] == UART_STATE_RX) {
+	if (m_StateUart[uart] == UartState::RX) {
 		return;
 	}
 
 	H3_UART_TypeDef *p = _get_uart(uart);
-	assert(p != 0);
+	assert(p != nullptr);
 
 	while ((p->USR & UART_USR_BUSY) == UART_USR_BUSY) {
 		(void) p->O00.RBR;
@@ -267,14 +261,14 @@ void dmx_multi_start_data(uint8_t port) {
 	p->O08.FCR = UART_FCR_EFIFO | UART_FCR_RRESET | UART_FCR_TRIG1;
 	p->O04.IER = UART_IER_ERBFI;
 
-	uart_state[uart] = UART_STATE_RX;
-	dmx_receive_state[uart] = IDLE;
+	m_StateUart[uart] = UartState::RX;
+	s_DmxReceiveState[uart] = DmxState::IDLE;
 }
 
-void dmx_multi_stop_data(uint8_t port) {
+void DmxMultiInput::StopData(uint32_t port) {
 	const uint32_t uart = _port_to_uart(port);
 
-	if (uart_state[uart] == UART_STATE_IDLE) {
+	if (m_StateUart[uart] == UartState::IDLE) {
 		return;
 	}
 
@@ -284,11 +278,11 @@ void dmx_multi_stop_data(uint8_t port) {
 	p->O08.FCR = 0;
 	p->O04.IER = 0;
 
-	uart_state[uart] = UART_STATE_IDLE;
-	dmx_receive_state[uart] = IDLE;
+	m_StateUart[uart] = UartState::IDLE;
+	s_DmxReceiveState[uart] = DmxState::IDLE;
 }
 
-void dmx_multi_input_init(void) {
+DmxMultiInput::DmxMultiInput() {
 	uint32_t i;
 
 	// 0 = input, 1 = output
@@ -320,37 +314,42 @@ void dmx_multi_input_init(void) {
 	h3_gpio_clr(GPIO_ANALYZER_CH7);
 #endif
 
-	for (i = 0; i < DMX_MAX_UARTS; i++) {
-		dmx_data_buffer_index_head[i] = 0;
-		dmx_data_buffer_index_tail[i] = 0;
-		memset((void *) &dmx_data[i]->statistics, 0, sizeof(struct _dmx_statistics));
-		dmx_data_index[i] = 0;
-		dmx_receive_state[i] = IDLE;
+	for (i = 0; i < DMX_MAX_IN; i++) {
+		s_nDmxDataBufferIndexHead[i] = 0;
+		s_nDmxDataBufferIndexTail[i] = 0;
+
+		auto *p = reinterpret_cast<volatile uint8_t *>(&s_aDmxData[i]->statistics);
+		for (uint32_t j = 0; j < sizeof(struct _dmx_statistics); j++) {
+			*p++ = 0;
+		}
+
+		s_nDmxDataIndex[i] = 0;
+		s_DmxReceiveState[i] = DmxState::IDLE;
 		//
-		dmx_updates_per_second[i] = 0;
-		dmx_packets[i] = 0;
-		dmx_packets_previous[i] = 0;
+		s_nDmxUpdatesPerSecond[i] = 0;
+		s_nDmxPackets[i] = 0;
+		s_nDmxPacketsPrevious[i] = 0;
 	}
 
-	dmx_multi_uart_init(1);
-	dmx_multi_uart_init(2);
+	DmxMulti::UartInit(1);
+	DmxMulti::UartInit(2);
 #if defined (ORANGE_PI_ONE)
-	dmx_multi_uart_init(3);
+	DmxMulti::UartInit(3);
 # ifndef DO_NOT_USE_UART0
-	dmx_multi_uart_init(0);
+	DmxMulti::UartInit(0);
 # endif
 #endif
 
 	__disable_fiq();
 
-	arm_install_handler((unsigned) fiq_dmx_multi_input, ARM_VECTOR(ARM_VECTOR_FIQ));
+	arm_install_handler(reinterpret_cast<unsigned>(fiq_dmx_multi_input), ARM_VECTOR(ARM_VECTOR_FIQ));
 
-	gic_fiq_config(H3_UART1_IRQn, 1);
-	gic_fiq_config(H3_UART2_IRQn, 1);
+	gic_fiq_config(H3_UART1_IRQn, GIC_CORE0);
+	gic_fiq_config(H3_UART2_IRQn, GIC_CORE0);
 #if defined (ORANGE_PI_ONE)
-	gic_fiq_config(H3_UART3_IRQn, 1);
+	gic_fiq_config(H3_UART3_IRQn, GIC_CORE0);
 # ifndef DO_NOT_USE_UART0
-	gic_fiq_config(H3_UART0_IRQn, 1);
+	gic_fiq_config(H3_UART0_IRQn, GIC_CORE0);
 # endif
 #endif
 

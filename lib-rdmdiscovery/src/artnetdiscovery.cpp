@@ -111,6 +111,7 @@ const uint8_t *ArtNetRdmController::Handler(uint8_t nPort, const uint8_t *pRdmDa
 
 	while (nullptr != RDMMessage::Receive(nPort)) {
 		// Discard late responses
+		Hardware::Get()->WatchdogFeed();
 	}
 
 	const auto *pRdmMessageNoSc = reinterpret_cast<const TRdmMessageNoSc*>(const_cast<uint8_t*>(pRdmData));

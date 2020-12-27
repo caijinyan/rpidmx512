@@ -37,6 +37,7 @@
 
 extern "C" {
  void udelay(uint32_t us);
+ void console_putc(char);
 }
 
 static uint8_t pdl[2][RDM_UID_SIZE];
@@ -78,17 +79,21 @@ const uint8_t *RDMDiscovery::GetUid() {
 void RDMDiscovery::Full() {
 	Reset();
 
+	Hardware::Get()->WatchdogFeed();
+
 	m_UnMute.Send(m_nPort);
 	m_UnMute.ReceiveTimeOut(m_nPort, 2800);
 
 	Hardware::Get()->WatchdogFeed();
 	udelay(100000);
+	Hardware::Get()->WatchdogFeed();
 
 	m_UnMute.Send(m_nPort);
 	m_UnMute.ReceiveTimeOut(m_nPort, 2800);
 
 	Hardware::Get()->WatchdogFeed();
 	udelay(100000);
+	Hardware::Get()->WatchdogFeed();
 
 	m_UnMute.Send(m_nPort);
 
@@ -258,6 +263,8 @@ bool RDMDiscovery::QuickFind(const uint8_t *uid) {
 	m_DiscUniqueBranch.Send(m_nPort);
 
 	pResponse = const_cast<uint8_t *>(m_DiscUniqueBranch.ReceiveTimeOut(m_nPort, RECEIVE_TIME_OUT));
+
+	Hardware::Get()->WatchdogFeed();
 
 	if ((pResponse != nullptr) && (IsValidDiscoveryResponse(pResponse, r_uid))) {
 		QuickFind(r_uid);

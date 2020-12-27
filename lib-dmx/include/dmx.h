@@ -29,18 +29,19 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define DMX_MAX_OUT		4
+#define DMX_MAX_OUT		4U
+#define DMX_MAX_IN		4U
 
 #define DMX_DATA_BUFFER_SIZE					516									///< including SC, aligned 4
 #define DMX_DATA_BUFFER_INDEX_ENTRIES			(1 << 1)							///<
 #define DMX_DATA_BUFFER_INDEX_MASK 				(DMX_DATA_BUFFER_INDEX_ENTRIES - 1)	///<
 
-#define DMX_TRANSMIT_BREAK_TIME_MIN				92		///< 92 us
-#define DMX_TRANSMIT_BREAK_TIME_TYPICAL			176		///< 176 us
-#define DMX_TRANSMIT_MAB_TIME_MIN				12		///< 12 us
-#define DMX_TRANSMIT_MAB_TIME_MAX				1E6		///< 1s
-#define DMX_TRANSMIT_REFRESH_RATE_DEFAULT		40		///< 40 Hz
-#define DMX_TRANSMIT_PERIOD_DEFAULT				(uint32_t)(1E6 / DMX_TRANSMIT_REFRESH_RATE_DEFAULT)	///< 25000 us
+#define DMX_TRANSMIT_BREAK_TIME_MIN				92U		///< 92 us
+#define DMX_TRANSMIT_BREAK_TIME_TYPICAL			176U	///< 176 us
+#define DMX_TRANSMIT_MAB_TIME_MIN				12U		///< 12 us
+#define DMX_TRANSMIT_MAB_TIME_MAX				1000000	///< 1s
+#define DMX_TRANSMIT_REFRESH_RATE_DEFAULT		40U		///< 40 Hz
+#define DMX_TRANSMIT_PERIOD_DEFAULT				(1000000U / DMX_TRANSMIT_REFRESH_RATE_DEFAULT)	///< 25000 us
 #define DMX_TRANSMIT_BREAK_TO_BREAK_TIME_MIN	1204	///< us
 
 #define DMX_MIN_SLOT_VALUE 						0		///< The minimum value a DMX512 slot can take.
@@ -147,7 +148,7 @@ public:
 	virtual const uint8_t *RdmReceiveTimeOut(uint8_t nPort, uint32_t nTimeOut)=0;
 
 public:
-	inline static DmxSet* Get() {
+	static DmxSet* Get() {
 		return s_pThis;
 	}
 
@@ -177,39 +178,39 @@ public:
 public: // DMX
 	void Init();
 
-	inline uint32_t GetUpdatesPerSecond() {
+	uint32_t GetUpdatesPerSecond() {
 		return dmx_get_updates_per_seconde();
 	}
 
-	inline const uint8_t *GetDmxCurrentData() {
+	const uint8_t* GetDmxCurrentData() {
 		return dmx_get_current_data();
 	}
 
-	inline const uint8_t *GetDmxAvailable() {
+	const uint8_t* GetDmxAvailable() {
 		return dmx_get_available();
 	}
 
-	inline void SetDmxBreakTime(uint32_t nBreakTime) {
+	void SetDmxBreakTime(uint32_t nBreakTime) {
 		dmx_set_output_break_time(nBreakTime);
 	}
 
-	inline  uint32_t GetDmxBreakTime() {
+	uint32_t GetDmxBreakTime() {
 		return dmx_get_output_break_time();
 	}
 
-	inline void SetDmxMabTime(uint32_t nMabTime) {
+	void SetDmxMabTime(uint32_t nMabTime) {
 		dmx_set_output_mab_time(nMabTime);
 	}
 
-	inline uint32_t GetDmxMabTime() {
+	uint32_t GetDmxMabTime() {
 		return dmx_get_output_mab_time();
 	}
 
-	inline void SetDmxPeriodTime(uint32_t nPeriodTime) {
+	void SetDmxPeriodTime(uint32_t nPeriodTime) {
 		dmx_set_output_period(nPeriodTime);
 	}
 
-	inline uint32_t GetDmxPeriodTime() {
+	uint32_t GetDmxPeriodTime() {
 		return dmx_get_output_period();
 	}
 

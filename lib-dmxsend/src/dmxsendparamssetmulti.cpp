@@ -1,8 +1,8 @@
 /**
- * @file dmx++.cpp
+ * @file dmxsendparamssetmulti.cpp
  *
  */
-/* Copyright (C) 2018-2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,43 +26,26 @@
 #include <stdint.h>
 #include <cassert>
 
-#include "dmx.h"
-#include "rdm_send.h"
+#include "dmxparams.h"
 
-#include "h3_timer.h"
+#if defined (H3)
+void DMXParams::Set(DMXSendMulti *pDMXSendMulti) {
+	assert(pDMXSendMulti != nullptr);
 
-#include "debug.h"
+	if (isMaskSet(DmxSendParamsMask::BREAK_TIME)) {
+		pDMXSendMulti->SetDmxBreakTime(m_tDMXParams.nBreakTime);
+	}
 
-void Dmx::SetPortDirection(__attribute__((unused)) uint8_t nPort, TDmxRdmPortDirection tPortDirection, bool bEnableData) {
-	assert(nPort == 0);
+	if (isMaskSet(DmxSendParamsMask::MAB_TIME)) {
+		pDMXSendMulti->SetDmxMabTime(m_tDMXParams.nMabTime);
+	}
 
-	dmx_set_port_direction(static_cast<_dmx_port_direction>(tPortDirection), bEnableData);
-}
-
-void Dmx::RdmSendRaw(__attribute__((unused)) uint8_t nPort, const uint8_t *pRdmData, uint16_t nLength) {
-	assert(nPort == 0);
-
-	rdm_send_data(pRdmData, nLength);
-}
-
-const uint8_t *Dmx::RdmReceive(__attribute__((unused)) uint8_t nPort) {
-	assert(nPort == 0);
-
-	const auto *p = rdm_get_available();
-	return p;
-}
-
-const uint8_t *Dmx::RdmReceiveTimeOut(__attribute__((unused)) uint8_t nPort, uint32_t nTimeOut) {
-	assert(nPort == 0);
-
-	uint8_t *p = nullptr;
-	const auto nMicros = H3_TIMER->AVS_CNT1;
-
-	do {
-		if ((p = const_cast<uint8_t *>(rdm_get_available())) != nullptr) {
-			return p;
+	if (isMaskSet(DmxSendParamsMask::REFRESH_RATE)) {
+		uint32_t period = 0;
+		if (m_tDMXParams.nRefreshRate != 0) {
+			period = static_cast<uint32_t>(1000000 / m_tDMXParams.nRefreshRate);
 		}
-	} while ((H3_TIMER->AVS_CNT1 - nMicros) < nTimeOut);
-
-	return p;
+		pDMXSendMulti->SetDmxPeriodTime(period);
+	}
 }
+#endif

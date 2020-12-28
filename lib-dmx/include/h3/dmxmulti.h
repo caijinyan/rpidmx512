@@ -53,6 +53,7 @@ public:
 		return m_nDmxTransmitMabTime;
 	}
 	
+	void SetDmxPeriodTime(uint32_t nPeriod);
 	uint32_t GetDmxPeriodTime() const {
 		return m_nDmxTransmitPeriod;
 	}
@@ -70,8 +71,10 @@ private:
 	uint32_t m_nDmxTransmitBreakTime { DMX_TRANSMIT_BREAK_TIME_MIN };
 	uint32_t m_nDmxTransmitMabTime { DMX_TRANSMIT_MAB_TIME_MIN };
 	uint32_t m_nDmxTransmitPeriod { DMX_TRANSMIT_PERIOD_DEFAULT };
+	uint32_t m_nDmxTransmitPeriodRequested { DMX_TRANSMIT_PERIOD_DEFAULT };
 	uint8_t m_nDmxDataDirectionGpioPin[DMX_MAX_OUT];
 	TDmxRdmPortDirection m_tDmxPortDirection[DMX_MAX_OUT];
+	uint32_t m_nDmxTransmissionLength[DMX_MAX_OUT];
 };
 
 #endif /* H3_DMXMULTI_H_ */

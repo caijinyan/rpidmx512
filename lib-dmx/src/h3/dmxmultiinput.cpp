@@ -73,27 +73,27 @@ static volatile uint32_t s_nDmxUpdatesPerSecond[DMX_MAX_IN] ALIGNED;
 static volatile uint32_t s_nDmxPackets[DMX_MAX_IN] ALIGNED;
 static volatile uint32_t s_nDmxPacketsPrevious[DMX_MAX_IN] ALIGNED;
 
-const uint8_t *DmxMultiInput::GetDmxAvailable(uint32_t port)  {
-	const uint32_t uart = _port_to_uart(port);
+const uint8_t *DmxMultiInput::GetDmxAvailable(uint32_t nPort)  {
+	const auto nUart = _port_to_uart(nPort);
 
 	dmb();
-	if (s_nDmxDataBufferIndexHead[uart] == s_nDmxDataBufferIndexTail[uart]) {
+	if (s_nDmxDataBufferIndexHead[nUart] == s_nDmxDataBufferIndexTail[nUart]) {
 		return nullptr;
 	} else {
-		const auto *p = const_cast<const uint8_t *>(s_aDmxData[uart][s_nDmxDataBufferIndexTail[uart]].data);
-		s_nDmxDataBufferIndexTail[uart] = (s_nDmxDataBufferIndexTail[uart] + 1) & DMX_DATA_BUFFER_INDEX_MASK;
+		const auto *p = const_cast<const uint8_t *>(s_aDmxData[nUart][s_nDmxDataBufferIndexTail[nUart]].data);
+		s_nDmxDataBufferIndexTail[nUart] = (s_nDmxDataBufferIndexTail[nUart] + 1) & DMX_DATA_BUFFER_INDEX_MASK;
 		return p;
 	}
 }
 
-uint32_t DmxMultiInput::GetUpdatesPerSeconde(uint32_t port) {
-	const uint32_t uart = _port_to_uart(port);
+uint32_t DmxMultiInput::GetUpdatesPerSeconde(uint32_t nPort) {
+	const auto uart = _port_to_uart(nPort);
 
 	dmb();
 	return s_nDmxUpdatesPerSecond[uart];
 }
 
-void fiq_dmx_in_handler(uint8_t uart, const H3_UART_TypeDef *u, uint32_t iir) {
+void fiq_dmx_in_handler(uint32_t uart, const H3_UART_TypeDef *u, uint32_t iir) {
 	isb();
 
 	if ((u->LSR & UART_LSR_BI) == UART_LSR_BI) {
@@ -104,7 +104,7 @@ void fiq_dmx_in_handler(uint8_t uart, const H3_UART_TypeDef *u, uint32_t iir) {
 #endif
 	}
 
-	uint32_t rfl = u->RFL;
+	auto rfl = u->RFL;
 
 	while(rfl--) {
 #ifdef LOGIC_ANALYZER
@@ -244,14 +244,14 @@ static void irq_timer1_dmx_receive(__attribute__((unused)) uint32_t clo) {
 	}
 }
 
-void DmxMultiInput::StartData(uint32_t port) {
-	const uint32_t uart = _port_to_uart(port);
+void DmxMultiInput::StartData(uint32_t nPort) {
+	const auto nUart = _port_to_uart(nPort);
 
-	if (m_StateUart[uart] == UartState::RX) {
+	if (m_StateUart[nUart] == UartState::RX) {
 		return;
 	}
 
-	H3_UART_TypeDef *p = _get_uart(uart);
+	auto *p = _get_uart(nUart);
 	assert(p != nullptr);
 
 	while ((p->USR & UART_USR_BUSY) == UART_USR_BUSY) {
@@ -261,25 +261,25 @@ void DmxMultiInput::StartData(uint32_t port) {
 	p->O08.FCR = UART_FCR_EFIFO | UART_FCR_RRESET | UART_FCR_TRIG1;
 	p->O04.IER = UART_IER_ERBFI;
 
-	m_StateUart[uart] = UartState::RX;
-	s_DmxReceiveState[uart] = DmxState::IDLE;
+	m_StateUart[nUart] = UartState::RX;
+	s_DmxReceiveState[nUart] = DmxState::IDLE;
 }
 
-void DmxMultiInput::StopData(uint32_t port) {
-	const uint32_t uart = _port_to_uart(port);
+void DmxMultiInput::StopData(uint32_t nPort) {
+	const auto nUart = _port_to_uart(nPort);
 
-	if (m_StateUart[uart] == UartState::IDLE) {
+	if (m_StateUart[nUart] == UartState::IDLE) {
 		return;
 	}
 
-	H3_UART_TypeDef *p = _get_uart(uart);
+	auto *p = _get_uart(nUart);
 	assert(p != 0);
 
 	p->O08.FCR = 0;
 	p->O04.IER = 0;
 
-	m_StateUart[uart] = UartState::IDLE;
-	s_DmxReceiveState[uart] = DmxState::IDLE;
+	m_StateUart[nUart] = UartState::IDLE;
+	s_DmxReceiveState[nUart] = DmxState::IDLE;
 }
 
 DmxMultiInput::DmxMultiInput() {

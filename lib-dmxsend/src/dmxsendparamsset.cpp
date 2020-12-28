@@ -47,17 +47,3 @@ void DMXParams::Set(DMXSend *pDMXSend) {
 		pDMXSend->SetDmxPeriodTime(period);
 	}
 }
-
-#if defined (H3)
-void DMXParams::Set(DMXSendMulti *pDMXSendMulti) {
-	assert(pDMXSendMulti != nullptr);
-
-	if (isMaskSet(DmxSendParamsMask::BREAK_TIME)) {
-		pDMXSendMulti->SetDmxBreakTime(m_tDMXParams.nBreakTime);
-	}
-
-	if (isMaskSet(DmxSendParamsMask::MAB_TIME)) {
-		pDMXSendMulti->SetDmxMabTime(m_tDMXParams.nMabTime);
-	}
-}
-#endif

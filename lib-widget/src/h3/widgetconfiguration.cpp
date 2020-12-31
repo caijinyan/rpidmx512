@@ -30,24 +30,24 @@
 
 #include "dmx.h"
 
-void WidgetConfiguration::Store(const struct _widget_params *widget_params) {
+void WidgetConfiguration::Store(const struct TWidgetConfiguration *widget_params) {
 	assert(StoreWidget::Get() != nullptr);
 
-	if (widget_params->break_time != s_nBreakTime) {
-		s_nBreakTime = widget_params->break_time;
+	if (widget_params->nBreakTime != s_nBreakTime) {
+		s_nBreakTime = widget_params->nBreakTime;
 		Dmx::Get()->SetDmxBreakTime((static_cast<float>((s_nBreakTime)) * 10.67));
-		StoreWidget::Get()->UpdateBreakTime(widget_params->break_time);
+		StoreWidget::Get()->UpdateBreakTime(widget_params->nBreakTime);
 	}
 
-	if (widget_params->mab_time != s_nMabTime) {
-		s_nMabTime = widget_params->mab_time;
+	if (widget_params->nMabTime != s_nMabTime) {
+		s_nMabTime = widget_params->nMabTime;
 		Dmx::Get()->SetDmxMabTime((static_cast<float>((s_nMabTime)) * 10.67));
-		StoreWidget::Get()->UpdateMabTime(widget_params->mab_time);
+		StoreWidget::Get()->UpdateMabTime(widget_params->nMabTime);
 	}
 
-	if (widget_params->refresh_rate != s_nRefreshRate) {
-		s_nRefreshRate = widget_params->refresh_rate;
-		Dmx::Get()->SetDmxPeriodTime(widget_params->refresh_rate == 0 ? 0 : (1000000U / widget_params->refresh_rate));
-		StoreWidget::Get()->UpdateRefreshRate(widget_params->refresh_rate);
+	if (widget_params->nRefreshRate != s_nRefreshRate) {
+		s_nRefreshRate = widget_params->nRefreshRate;
+		Dmx::Get()->SetDmxPeriodTime(widget_params->nRefreshRate == 0 ? 0 : (1000000U / widget_params->nRefreshRate));
+		StoreWidget::Get()->UpdateRefreshRate(widget_params->nRefreshRate);
 	}
 }

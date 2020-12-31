@@ -39,10 +39,6 @@
 uint8_t Rdm::m_TransactionNumber[DMX_MAX_OUT] = {0, };
 uint32_t Rdm::m_nLastSendMicros[DMX_MAX_OUT] = {0, };
 
-Rdm::Rdm() {
-	assert(DmxSet::Get() != nullptr);
-}
-
 const uint8_t *Rdm::Receive(uint8_t nPort) {
 	return DmxSet::Get()->RdmReceive(nPort);
 }

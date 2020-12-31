@@ -81,19 +81,19 @@ public:
 		m_tMode = mode;
 	}
 
-	uint32_t GetReceivedDmxPacketPeriod() const {
-		return m_nReceivedDmxPacketPeriod;
+	uint32_t GetReceivedDmxPacketPeriodMillis() const {
+		return m_nReceivedDmxPacketPeriodMillis;
 	}
 
-	void SetReceivedDmxPacketPeriod(uint32_t period) {
-		m_nReceivedDmxPacketPeriod = period;
+	void SetReceivedDmxPacketPeriodMillis(uint32_t period) {
+		m_nReceivedDmxPacketPeriodMillis = period;
 	}
 
 	uint32_t GetReceivedDmxPacketCount() const {
 		return m_nReceivedDmxPacketCount;
 	}
 
-	const struct TRdmStatistics *rdm_statistics_get() const {
+	const struct TRdmStatistics *RdmStatisticsGet() const {
 		return &m_RdmStatistics;
 	}
 
@@ -147,9 +147,9 @@ private:
 	uint8_t m_aData[WIDGET_DATA_BUFFER_SIZE];	///< Message between widget and the USB host
 	widget::Mode m_tMode { widget::Mode::DMX_RDM };
 	widget::SendState m_tReceiveDmxOnChange { widget::SendState::ALWAYS };
-	uint32_t m_nReceivedDmxPacketPeriod { 0 };
-	uint32_t m_nReceivedDmxPacketStartMicros { 0 };
-	uint32_t m_nSendRdmPacketStartMicros { 0 };
+	uint32_t m_nReceivedDmxPacketPeriodMillis { 0 };
+	uint32_t m_nReceivedDmxPacketStartMillis { 0 };
+	uint32_t m_nSendRdmPacketStartMillis { 0 };
 	bool m_isRdmDiscoveryRunning { false };
 	uint32_t m_nReceivedDmxPacketCount { 0 };
 	struct TRdmStatistics m_RdmStatistics;

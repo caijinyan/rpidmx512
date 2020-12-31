@@ -105,7 +105,7 @@ void WidgetMonitor::Sniffer() {
 	const struct _dmx_data *dmx_statistics = (struct _dmx_data *)dmx_data;
 	const auto dmx_updates_per_seconde = dmx_get_updates_per_seconde();
 
-	const volatile auto *rdm_statistics = Widget::Get()->rdm_statistics_get();
+	const volatile auto *rdm_statistics = Widget::Get()->RdmStatisticsGet();
 
 	DmxData(dmx_data, MonitorLine::DMX_DATA);
 
@@ -150,7 +150,7 @@ void WidgetMonitor::Update() {
 		return;
 	}
 
-	struct _widget_params widget_params;
+	struct TWidgetConfiguration widget_params;
 	WidgetConfiguration::Get(&widget_params);
 
 	if (display_level > 1) {
@@ -165,10 +165,10 @@ void WidgetMonitor::Update() {
 		console_clear_line(MonitorLine::WIDGET_PARMS);
 
 		printf("Firmware %d.%d BreakTime %d(%d) MaBTime %d(%d) RefreshRate %d(%d)",
-				widget_params.firmware_msb, widget_params.firmware_lsb,
-				widget_params.break_time, dmx_get_output_break_time(),
-				widget_params.mab_time, dmx_get_output_mab_time(),
-				widget_params.refresh_rate, (1000000 / dmx_get_output_period()));
+				widget_params.nFirmwareMsb, widget_params.nFirmwareLsb,
+				widget_params.nBreakTime, dmx_get_output_break_time(),
+				widget_params.nMabTime, dmx_get_output_mab_time(),
+				widget_params.nRefreshRate, (1000000 / dmx_get_output_period()));
 
 		console_clear_line(MonitorLine::PORT_DIRECTION);
 
@@ -176,7 +176,7 @@ void WidgetMonitor::Update() {
 			const auto receive_dmx_on_change =  Widget::Get()->GetReceiveDmxOnChange();
 
 			if (receive_dmx_on_change == SendState::ALWAYS) {
-				const auto throttle = Widget::Get()->GetReceivedDmxPacketPeriod();
+				const auto throttle = Widget::Get()->GetReceivedDmxPacketPeriodMillis();
 				const auto widget_received_dmx_packet_count = Widget::Get()->GetReceivedDmxPacketCount();
 
 				console_puts("Input [SEND_ALWAYS]");

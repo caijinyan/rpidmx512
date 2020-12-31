@@ -133,7 +133,6 @@ struct TDmxData {
 	struct TDmxStatistics Statistics;
 };
 
-#if defined (H3)
 class DmxSet {
 public:
 	DmxSet();
@@ -165,20 +164,19 @@ public:
 
 	const uint8_t *RdmReceive(uint8_t nPort) override;
 	const uint8_t *RdmReceiveTimeOut(uint8_t nPort, uint32_t nTimeOut) override;
-#else
-class Dmx {
-public:
-	Dmx(uint8_t nGpioPin = GPIO_DMX_DATA_DIRECTION, bool DoInit = true);
 
-	inline void SetPortDirection(__attribute__((unused)) uint8_t nPort, TDmxRdmPortDirection tPortDirection, bool bEnableData = false) {
-		dmx_set_port_direction(static_cast<_dmx_port_direction>(tPortDirection), bEnableData);
-	}
-#endif
-public: // DMX
 	void Init();
+
+	void SetSendData(const uint8_t *pData, uint16_t nLength) {
+		dmx_set_send_data(pData, nLength);
+	}
 
 	uint32_t GetUpdatesPerSecond() {
 		return dmx_get_updates_per_seconde();
+	}
+
+	void ClearData() {
+		dmx_clear_data();
 	}
 
 	const uint8_t* GetDmxCurrentData() {

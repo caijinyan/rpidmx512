@@ -37,26 +37,12 @@
 uint8_t Rdm::m_TransactionNumber = 0;
 uint32_t Rdm::m_nLastSendMicros = 0;
 
-Rdm::Rdm(void) {
-
-}
-
 const uint8_t *Rdm::Receive(uint8_t nPort) {
-	const uint8_t *p = rdm_get_available();
-	return p;
+	return DmxSet::Get()->RdmReceive(nPort);
 }
 
 const uint8_t *Rdm::ReceiveTimeOut(uint8_t nPort, uint32_t nTimeOut) {
-	uint8_t *p = nullptr;
-	const uint32_t nMicros = BCM2835_ST->CLO;
-
-	do {
-		if ((p = const_cast<uint8_t*>(rdm_get_available())) != 0) {
-			return reinterpret_cast<const uint8_t*>(p);
-		}
-	} while ( BCM2835_ST->CLO - nMicros < nTimeOut);
-
-	return p;
+	return DmxSet::Get()->RdmReceiveTimeOut(nPort, nTimeOut);
 }
 
 void Rdm::Send(uint8_t nPort, struct TRdmMessage *pRdmCommand, uint32_t nSpacingMicros) {

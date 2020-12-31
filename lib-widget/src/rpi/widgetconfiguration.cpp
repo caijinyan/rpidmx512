@@ -175,26 +175,26 @@ void WidgetConfiguration::UpdateConfigFile() {
 	}
 }
 
-void WidgetConfiguration::Store(const struct _widget_params *widget_params) {
+void WidgetConfiguration::Store(const struct TWidgetConfiguration *widget_params) {
 	bool call_update_config_file = false;
 
-	if (widget_params->break_time != s_nBreakTime) {
-		s_nBreakTime = widget_params->break_time;
+	if (widget_params->nBreakTime != s_nBreakTime) {
+		s_nBreakTime = widget_params->nBreakTime;
 		Dmx::Get()->SetDmxBreakTime((static_cast<float>((s_nBreakTime)) * 10.67));
 		needs_update[AI_BREAK_TIME] = true;
 		call_update_config_file = true;
 	}
 
-	if (widget_params->mab_time != s_nMabTime) {
-		s_nMabTime = widget_params->mab_time;
+	if (widget_params->nMabTime != s_nMabTime) {
+		s_nMabTime = widget_params->nMabTime;
 		Dmx::Get()->SetDmxMabTime((static_cast<float>((s_nMabTime)) * 10.67));
 		needs_update[AI_MAB_TIME] = true;
 		call_update_config_file = true;
 	}
 
-	if (widget_params->refresh_rate != s_nRefreshRate) {
-		s_nRefreshRate = widget_params->refresh_rate;
-		Dmx::Get()->SetDmxPeriodTime(widget_params->refresh_rate == 0 ? 0 : (1000000U / widget_params->refresh_rate));
+	if (widget_params->nRefreshRate != s_nRefreshRate) {
+		s_nRefreshRate = widget_params->nRefreshRate;
+		Dmx::Get()->SetDmxPeriodTime(widget_params->nRefreshRate == 0 ? 0 : (1000000U / widget_params->nRefreshRate));
 		needs_update[AI_REFRESH_RATE] = true;
 		call_update_config_file = true;
 	}

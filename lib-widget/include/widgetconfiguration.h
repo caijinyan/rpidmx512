@@ -64,34 +64,34 @@ enum {
 	FIRMWARE_RDM_SNIFFER = 3	///< RDM Sniffer firmware. This is for use with the Openlighting RDM packet monitoring application.
 };
 
-struct _widget_params {
-	uint8_t firmware_lsb;			///< Firmware version LSB. Valid range is 0 to 255.
-	uint8_t firmware_msb;			///< Firmware version MSB. Valid range is 0 to 255.
-	uint8_t break_time;				///< DMX output break time in 10.67 microsecond units. Valid range is 9 to 127.
-	uint8_t mab_time;				///< DMX output Mark After Break time in 10.67 microsecond units. Valid range is 1 to 127.
-	uint8_t refresh_rate;			///< DMX output rate in packets per second. Valid range is 1 to 40.
+struct TWidgetConfiguration {
+	uint8_t nFirmwareLsb;			///< Firmware version LSB. Valid range is 0 to 255.
+	uint8_t nFirmwareMsb;			///< Firmware version MSB. Valid range is 0 to 255.
+	uint8_t nBreakTime;				///< DMX output break time in 10.67 microsecond units. Valid range is 9 to 127.
+	uint8_t nMabTime;				///< DMX output Mark After Break time in 10.67 microsecond units. Valid range is 1 to 127.
+	uint8_t nRefreshRate;			///< DMX output rate in packets per second. Valid range is 1 to 40.
 };
 
-struct _widget_params_data {
-	/*@shared@*/uint8_t *data;
-	uint8_t length;
+struct TWidgetConfigurationData {
+	uint8_t *pData;
+	uint8_t nLength;
 };
 
 struct WidgetConfiguration {
-	static void Get(struct _widget_params *widget_params) {
-		widget_params->break_time = s_nBreakTime;
-		widget_params->firmware_lsb = s_nFirmwareLsb;
-		widget_params->firmware_msb = s_nFirmwareMsb;
-		widget_params->mab_time = s_nMabTime;
-		widget_params->refresh_rate = s_nRefreshRate;
+	static void Get(struct TWidgetConfiguration *pWidgetConfiguration) {
+		pWidgetConfiguration->nBreakTime = s_nBreakTime;
+		pWidgetConfiguration->nFirmwareLsb = s_nFirmwareLsb;
+		pWidgetConfiguration->nFirmwareMsb = s_nFirmwareMsb;
+		pWidgetConfiguration->nMabTime = s_nMabTime;
+		pWidgetConfiguration->nRefreshRate = s_nRefreshRate;
 	}
 
-	static void GetTypeId(struct _widget_params_data *info) {
-		info->data = const_cast<uint8_t*>(s_aDeviceTypeId);
-		info->length = DEVICE_TYPE_ID_LENGTH;
+	static void GetTypeId(struct TWidgetConfigurationData *pInfo) {
+		pInfo->pData = const_cast<uint8_t*>(s_aDeviceTypeId);
+		pInfo->nLength = DEVICE_TYPE_ID_LENGTH;
 	}
 
-	static void Store(const struct _widget_params *widget_params);
+	static void Store(const struct TWidgetConfiguration *pWidgetConfiguration);
 
 	static void SetMode(widget::Mode tMode);
 	static void SetBreakTime(uint8_t nBreakTime);

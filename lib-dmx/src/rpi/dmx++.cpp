@@ -1,8 +1,8 @@
 /**
- * @file device_software_version.h
+ * @file dmx++.cpp
  *
  */
-/* Copyright (C) 2019 by Arjan van Vught mailto:info@raspberrypi-dmx.nl
+/* Copyright (C) 2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,13 +23,22 @@
  * THE SOFTWARE.
  */
 
-#ifndef DEVICE_SOFTWARE_VERSION_H_
-#define DEVICE_SOFTWARE_VERSION_H_
+#include <stdint.h>
+#include <cassert>
 
-#ifndef ALIGNED
- #define ALIGNED __attribute__ ((aligned (4)))
-#endif
+#include "dmx.h"
 
-static const char DEVICE_SOFTWARE_VERSION[] ALIGNED = "2.3";
+#include "bcm2835.h"
 
-#endif /* DEVICE_SOFTWARE_VERSION_H_ */
+const uint8_t *Dmx::RdmReceiveTimeOut(__attribute__((unused)) uint8_t nPort, uint32_t nTimeOut) {
+	uint8_t *p = nullptr;
+	const uint32_t nMicros = BCM2835_ST->CLO;
+
+	do {
+		if ((p = const_cast<uint8_t*>(rdm_get_available())) != 0) {
+			return reinterpret_cast<const uint8_t*>(p);
+		}
+	} while ( BCM2835_ST->CLO - nMicros < nTimeOut);
+
+	return p;
+}

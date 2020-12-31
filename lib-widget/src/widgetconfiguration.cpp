@@ -80,8 +80,8 @@ void WidgetConfiguration::SetThrottle(uint8_t nThrottle) {
 	uint32_t nPeriod = 0;
 
 	if (nThrottle != 0) {
-		nPeriod = (1000000U / nThrottle);
+		nPeriod = (1000U / nThrottle);
 	}
 
-	Widget::Get()->SetReceivedDmxPacketPeriod(nPeriod);
+	Widget::Get()->SetReceivedDmxPacketPeriodMillis(nPeriod);
 }

@@ -1,8 +1,7 @@
 /**
- * @file monitor_line.c
- *
+ * @file widgetparamsdump.cpp
  */
-/* Copyright (C) 2016-2018 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,22 +23,36 @@
  */
 
 #include <stdio.h>
-#include <stdarg.h>
-#include <stddef.h>
 
-#include "console.h"
+#include "widgetparams.h"
+#include "widgetparamsconst.h"
 
-void monitor_line(__attribute__((unused)) int line, __attribute__((unused)) const char *fmt, ...) {
-	// For H3, only enabled when NDEBUG is not defined
-#if !(defined(NDEBUG) && defined(H3))
-	va_list va;
+void WidgetParams::Dump() {
+#ifndef NDEBUG
+	if (m_tWidgetParams.nSetList == 0) {
+		return;
+	}
 
-	console_clear_line(line);
+	printf("%s::%s \'%s\':\n", __FILE__, __FUNCTION__, WidgetParamsConst::FILE_NAME);
 
-	if (fmt != NULL) {
-		va_start(va, fmt);
-		(void) vprintf(fmt, va);
-		va_end(va);
+	if (isMaskSet(WidgetParamsMask::BREAK_TIME)) {
+		printf(" %s=%d\n", WidgetParamsConst::DMXUSBPRO_BREAK_TIME, static_cast<int>(m_tWidgetParams.nBreakTime));
+	}
+
+	if (isMaskSet(WidgetParamsMask::MAB_TIME)) {
+		printf(" %s=%d\n", WidgetParamsConst::DMXUSBPRO_MAB_TIME, static_cast<int>(m_tWidgetParams.nMabTime));
+	}
+
+	if (isMaskSet(WidgetParamsMask::REFRESH_RATE)) {
+		printf(" %s=%d\n", WidgetParamsConst::DMXUSBPRO_REFRESH_RATE, static_cast<int>(m_tWidgetParams.nRefreshRate));
+	}
+
+	if (isMaskSet(WidgetParamsMask::MODE)) {
+		printf(" %s=%d\n", WidgetParamsConst::WIDGET_MODE, static_cast<int>(m_tWidgetParams.tMode));
+	}
+
+	if (isMaskSet(WidgetParamsMask::THROTTLE)) {
+		printf(" %s=%d\n", WidgetParamsConst::DMX_SEND_TO_HOST_THROTTLE, static_cast<int>(m_tWidgetParams.nThrottle));
 	}
 #endif
 }

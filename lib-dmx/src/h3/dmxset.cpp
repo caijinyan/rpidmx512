@@ -31,5 +31,6 @@
 DmxSet *DmxSet::s_pThis = nullptr;
 
 DmxSet::DmxSet() {
+	assert(s_pThis == nullptr);
 	s_pThis = this;
 }

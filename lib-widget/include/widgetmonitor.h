@@ -29,15 +29,43 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace widgetmonitor {
+struct MonitorLine {
+	static constexpr auto TIME = 3;
+	static constexpr auto WIDGET_PARMS = 4;
+	static constexpr auto LABEL = 6;
+	static constexpr auto INFO = 7;
+	static constexpr auto PORT_DIRECTION = 9;
+	static constexpr auto DMX_DATA = 11;
+	static constexpr auto PACKETS = 14;
+	static constexpr auto RDM_DATA = 17;
+	static constexpr auto RDM_CC = 27;
+	static constexpr auto STATUS = 28;
+	static constexpr auto STATS = 29;
+};
+}  // namespace widgetmonitor
 
-extern void monitor_rdm_data(int, uint16_t, const uint8_t *, bool);
-extern void monitor_update(void);
+class WidgetMonitor {
+public:
+	static void Line(int, const char *, ...);
+	static void Uptime(uint32_t nLine);
+	static void RdmData(int, uint16_t, const uint8_t *, bool);
+	static void Update();
 
-#ifdef __cplusplus
-}
-#endif
+private:
+	static void Sniffer();
+	static void DmxData(const uint8_t * dmx_data, const int line);
+
+private:
+	static uint32_t s_nWidgetReceivedDmxPacketCountPrevious;
+	static uint32_t s_nUpdatesPerSecondeMin;
+	static uint32_t s_nUpdatesPerSecondeMax;
+	static uint32_t s_nSlotsInPacketMin;
+	static uint32_t s_nSlotsInPacketMax;
+	static uint32_t s_nSlotToSlotMin;
+	static uint32_t s_nSlotToSlotMax;
+	static uint32_t s_nBreakToBreakMin;
+	static uint32_t s_nBreakToBreakMax;
+};
 
 #endif /* WIDGET_MONITOR_H_ */

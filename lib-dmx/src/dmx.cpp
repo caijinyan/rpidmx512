@@ -25,13 +25,17 @@
 
 #include <stdint.h>
 #ifndef NDEBUG
- #include <stdio.h>
+# include <stdio.h>
 #endif
 #include <cassert>
 
 #include "dmx.h"
 
+Dmx *Dmx::s_pThis = nullptr;
+
 Dmx::Dmx(uint8_t nGpioPin, bool DoInit): m_IsInitDone(DoInit) {
+	assert(s_pThis == nullptr);
+	s_pThis = this;
 #ifndef NDEBUG
 	printf("Dmx::Dmx nGpioPin=%d, DoInit=%d\n", nGpioPin, DoInit);
 #endif

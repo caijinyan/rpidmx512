@@ -147,7 +147,6 @@ public:
 	virtual const uint8_t *RdmReceive(uint8_t nPort)=0;
 	virtual const uint8_t *RdmReceiveTimeOut(uint8_t nPort, uint32_t nTimeOut)=0;
 
-public:
 	static DmxSet* Get() {
 		return s_pThis;
 	}
@@ -214,8 +213,14 @@ public: // DMX
 		return dmx_get_output_period();
 	}
 
+	static Dmx* Get() {
+		return s_pThis;
+	}
+
 private:
 	bool m_IsInitDone;
+
+	static Dmx *s_pThis;
 };
 
 #endif

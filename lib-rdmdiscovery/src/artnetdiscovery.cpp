@@ -69,11 +69,13 @@ void ArtNetRdmController::Print() {
 }
 
 void ArtNetRdmController::Full(uint8_t nPort) {
+	DEBUG_ENTRY
 	assert(nPort < DMX_MAX_UARTS);
 
 	DEBUG_PRINTF("nPort=%d", nPort);
 
 	m_Discovery[nPort]->Full();
+	DEBUG_EXIT
 }
 
 uint8_t ArtNetRdmController::GetUidCount(uint8_t nPort) {
@@ -85,19 +87,25 @@ uint8_t ArtNetRdmController::GetUidCount(uint8_t nPort) {
 }
 
 void ArtNetRdmController::Copy(uint8_t nPort, uint8_t *pTod) {
+	DEBUG_ENTRY
 	assert(nPort < DMX_MAX_UARTS);
 
 	DEBUG_PRINTF("nPort=%d", nPort);
 
 	m_Discovery[nPort]->Copy(pTod);
+
+	DEBUG_EXIT
 }
 
 void ArtNetRdmController::DumpTod(uint8_t nPort) {
+	DEBUG_ENTRY
 	assert(nPort < DMX_MAX_UARTS);
 
 	DEBUG_PRINTF("nPort=%d", nPort);
 
 	m_Discovery[nPort]->Dump();
+
+	DEBUG_EXIT
 }
 
 const uint8_t *ArtNetRdmController::Handler(uint8_t nPort, const uint8_t *pRdmData) {

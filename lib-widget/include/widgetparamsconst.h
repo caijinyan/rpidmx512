@@ -1,8 +1,8 @@
 /**
- * @file led.c
+ * @file widgetparamsconst.h
  *
  */
-/* Copyright (C) 2015-2019 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,36 +23,18 @@
  * THE SOFTWARE.
  */
 
-#include <stdint.h>
+#ifndef WIDGETPARAMSCONST_H_
+#define WIDGETPARAMSCONST_H_
 
-#include "bcm2835.h"
-#include "arm/synchronize.h"
+struct WidgetParamsConst {
+	static const char FILE_NAME[];
 
-#include "c/hardware.h"
+	static const char DMXUSBPRO_BREAK_TIME[];
+	static const char DMXUSBPRO_MAB_TIME[];
+	static const char DMXUSBPRO_REFRESH_RATE[];
 
-static uint32_t ticks_per_second = 1000000 / 2;
+	static const char WIDGET_MODE[];
+	static const char DMX_SEND_TO_HOST_THROTTLE[];
+};
 
-static uint32_t led_counter = 0;
-static uint32_t micros_previous = 0;
-
-void led_set_ticks_per_second(uint32_t ticks) {
-	ticks_per_second = ticks;
-}
-
-void led_blink(void) {
-	if (ticks_per_second == 0) {
-		return;
-	}
-
-	dsb();
-	const uint32_t micros_now = BCM2835_ST->CLO;
-	dmb();
-
-	if (micros_now - micros_previous < ticks_per_second) {
-		return;
-	}
-
-	micros_previous = micros_now;
-
-	hardware_led_set((int)(led_counter++ & 0x01));
-}
+#endif /* WIDGETPARAMSCONST_H_ */

@@ -1,8 +1,8 @@
 /**
- * @file monitor_time_uptime.c
+ * @file widgetmonitor.cpp
  *
  */
-/* Copyright (C) 2016-2017 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2016-2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,35 +24,47 @@
  */
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <stddef.h>
-#include <time.h>
 
+#include "widgetmonitor.h"
+
+#include "hardware.h"
 #include "console.h"
-#include "c/hardware.h"
 
-void monitor_time_uptime(const int line) {
-	uint32_t uptime, days, hours, minutes, seconds;
-	time_t ltime;
-	struct tm *local_time;
-
-	uptime = hardware_uptime_seconds();
-
-	ltime = time(NULL);
-	local_time = localtime(&ltime);
+void WidgetMonitor::Uptime(uint32_t nLine) {
+	auto nUptime = Hardware::Get()->GetUpTime();
+	auto ltime = time(nullptr);
+	auto *pLocalTime = localtime(&ltime);
 
 	console_save_cursor();
-	console_set_cursor(0, line);
+	console_set_cursor(0, nLine);
 
-	days = uptime / ((uint32_t) 24 * (uint32_t) 3600);
-	uptime -= days * ((uint32_t) 24 * (uint32_t) 3600);
-	hours = uptime / (uint32_t) 3600;
-	uptime -= hours * (uint32_t) 3600;
-	minutes = uptime / (uint32_t) 60;
-	seconds = uptime - minutes * (uint32_t) 60;
+	const uint32_t nDays = nUptime / (24 * 3600);
+	nUptime -= nDays * (24 * 3600);
+	const uint32_t nHours = nUptime / 3600;
+	nUptime -= nHours * 3600;
+	const uint32_t nMinutes = nUptime / 60;
+	const uint32_t nSeconds = nUptime - nMinutes * 60;
 
 	printf("Local time %.2d:%.2d:%.2d, uptime %d days, %02d:%02d:%02d",
-			local_time->tm_hour, local_time->tm_min, local_time->tm_sec,
-			(int) days, (int) hours, (int) minutes, (int) seconds);
+			pLocalTime->tm_hour, pLocalTime->tm_min, pLocalTime->tm_sec, nDays,
+			nHours, nMinutes, nSeconds);
 
 	console_restore_cursor();
+}
+
+void WidgetMonitor::Line(__attribute__((unused)) int line, __attribute__((unused)) const char *fmt, ...) {
+	// For H3, only enabled when NDEBUG is not defined
+#if !(defined(NDEBUG) && defined(H3))
+	va_list va;
+
+	console_clear_line(line);
+
+	if (fmt != nullptr) {
+		va_start(va, fmt);
+		vprintf(fmt, va);
+		va_end(va);
+	}
+#endif
 }

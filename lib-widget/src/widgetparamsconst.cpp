@@ -1,8 +1,8 @@
 /**
- * @file i2c_is_connected.c
+ * @file dmxserialparamsconst.cpp
  *
  */
-/* Copyright (C) 2017-2019 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,24 +23,14 @@
  * THE SOFTWARE.
  */
 
-#include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
+#include "widgetparamsconst.h"
 
-#include "i2c.h"
+ const char WidgetParamsConst::FILE_NAME[] = "params.txt";
 
-bool i2c_is_connected(uint8_t address) {
-	uint8_t ret;
-	char buf;
+ const char WidgetParamsConst::DMXUSBPRO_BREAK_TIME[] = "dmxusbpro_break_time";
+ const char WidgetParamsConst::DMXUSBPRO_MAB_TIME[] = "dmxusbpro_mab_time";
+ const char WidgetParamsConst::DMXUSBPRO_REFRESH_RATE[] = "dmxusbpro_refresh_rate";
 
-	i2c_set_address(address);
+ const char WidgetParamsConst::WIDGET_MODE[] = "widget_mode";
+ const char WidgetParamsConst::DMX_SEND_TO_HOST_THROTTLE[] = "dmx_send_to_host_throttle";
 
-	if ((address >= 0x30 && address <= 0x37) || (address >= 0x50 && address <= 0x5F)) {
-		ret = FUNC_PREFIX(i2c_read(&buf, 1));
-	} else {
-		/* This is known to corrupt the Atmel AT24RF08 EEPROM */
-		ret = FUNC_PREFIX(i2c_write(NULL, 0));
-	}
-
-	return (ret == 0) ? true : false;
-}

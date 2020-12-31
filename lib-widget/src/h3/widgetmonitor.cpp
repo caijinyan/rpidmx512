@@ -1,8 +1,11 @@
 /**
- * @file widget_usb.h
+ * @file widgetmonitor.cpp
  *
  */
-/* Copyright (C) 2015, 2016 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/*
+ * Stub - Monitor is not support on the Orange Pi Zero
+ */
+/* Copyright (C) 2019-2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -13,7 +16,7 @@
 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
-
+#include "console.h"
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,14 +26,10 @@
  * THE SOFTWARE.
  */
 
-#ifndef WIDGET_USB_H_
-#define WIDGET_USB_H_
-
 #include <stdint.h>
 
-extern void widget_usb_send_header(const uint8_t, const uint16_t);
-extern void widget_usb_send_data(const uint8_t *, const uint16_t);
-extern void widget_usb_send_footer(void);
-extern void widget_usb_send_message(const uint8_t, const uint8_t *, const uint16_t);
+#include <widgetmonitor.h>
 
-#endif /* WIDGET_USB_H_ */
+void WidgetMonitor::RdmData(__attribute__((unused)) int line, __attribute__((unused)) uint16_t data_length, __attribute__((unused)) const uint8_t *data, __attribute__((unused)) bool is_sent) {
+
+}

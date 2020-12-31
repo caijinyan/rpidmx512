@@ -1,8 +1,8 @@
 /**
- * @file sscan_uint8_t.c
+ * @file widgetusb.cpp
  *
  */
-/* Copyright (C) 2016-2019 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2015-2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,41 +24,31 @@
  */
 
 #include <stdint.h>
-#include <stddef.h>
-#include <ctype.h>
-#include <assert.h>
 
-#include "c/sscan.h"
+#include "widget.h"
+#include "usb.h"
 
-extern char *get_name(const char *buf, const char *name);
+using namespace widget;
 
-int sscan_uint8_t(const char *buf, const char *name, uint8_t *value) {
-	assert(buf != NULL);
-	assert(name != NULL);
-	assert(value != NULL);
+void Widget::SendHeader(uint8_t nLabel, uint16_t nLength) {
+	usb_send_byte(static_cast<uint8_t>(Amf::START_CODE));
+	usb_send_byte(nLabel);
+	usb_send_byte((nLength & 0x00FF));
+	usb_send_byte((nLength >> 8));
+}
 
-	char *b;
-	int32_t k;
-
-	if ((b = get_name(buf, name)) == NULL) {
-		return SSCAN_NAME_ERROR;
+void Widget::SendData(const uint8_t *pData, uint16_t nLength) {
+	for (uint32_t i = 0; i < nLength; i++) {
+		usb_send_byte(pData[i]);
 	}
+}
 
-	k = 0;
+void Widget::SendFooter(void) {
+	usb_send_byte(static_cast<uint8_t>(Amf::END_CODE));
+}
 
-	do {
-		if (isdigit((int) *b) == 0) {
-			return SSCAN_VALUE_ERROR;
-		}
-		k = k * 10 + *b - '0';
-		b++;
-	} while ((*b != ' ') && (*b != (char) 0));
-
-	if (k > (int32_t) ((uint8_t) ~0)) {
-		return SSCAN_VALUE_ERROR;
-	}
-
-	*value = (uint8_t) k;
-
-	return SSCAN_OK;
+void Widget::SendMessage(uint8_t nLabel, const uint8_t *pData, uint16_t nLength) {
+	SendHeader(nLabel, nLength);
+	SendData(pData, nLength);
+	SendFooter();
 }

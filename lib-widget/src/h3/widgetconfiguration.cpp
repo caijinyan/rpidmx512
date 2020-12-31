@@ -1,7 +1,8 @@
 /**
- * @file read_config_file.h
+ * @file widgetconfiguration.cpp
+ *
  */
-/* Copyright (C) 2016-2019 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +23,31 @@
  * THE SOFTWARE.
  */
 
-#ifndef READ_CONFIG_FILE_H_
-#define READ_CONFIG_FILE_H_
+#include <cassert>
 
-#include <stdbool.h>
+#include "widgetconfiguration.h"
+#include "storewidget.h"
 
-typedef void (*funcptr)(const char *);
+#include "dmx.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+void WidgetConfiguration::Store(const struct _widget_params *widget_params) {
+	assert(StoreWidget::Get() != nullptr);
 
-extern bool read_config_file(const char *, funcptr);
+	if (widget_params->break_time != s_nBreakTime) {
+		s_nBreakTime = widget_params->break_time;
+		Dmx::Get()->SetDmxBreakTime((static_cast<float>((s_nBreakTime)) * 10.67));
+		StoreWidget::Get()->UpdateBreakTime(widget_params->break_time);
+	}
 
-#ifdef __cplusplus
+	if (widget_params->mab_time != s_nMabTime) {
+		s_nMabTime = widget_params->mab_time;
+		Dmx::Get()->SetDmxMabTime((static_cast<float>((s_nMabTime)) * 10.67));
+		StoreWidget::Get()->UpdateMabTime(widget_params->mab_time);
+	}
+
+	if (widget_params->refresh_rate != s_nRefreshRate) {
+		s_nRefreshRate = widget_params->refresh_rate;
+		Dmx::Get()->SetDmxPeriodTime(widget_params->refresh_rate == 0 ? 0 : (1000000U / widget_params->refresh_rate));
+		StoreWidget::Get()->UpdateRefreshRate(widget_params->refresh_rate);
+	}
 }
-#endif
-
-#endif /* READ_CONFIG_FILE_H_ */

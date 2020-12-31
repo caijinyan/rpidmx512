@@ -91,10 +91,10 @@ void notmain(void) {
 
 		dmxreceiver.Run(nLength);
 
-		const uint32_t nMicrosNow = hw.Micros();
+		const auto nMicrosNow = hw.Micros();
 
 		if (nMicrosNow - nMicrosPrevious > (1000000 / 2)) {
-			const uint32_t dmx_updates_per_seconde = dmxreceiver.GetUpdatesPerSecond();
+			const auto dmx_updates_per_seconde = dmxreceiver.GetUpdatesPerSecond();
 
 			console_save_cursor();
 
@@ -108,8 +108,8 @@ void notmain(void) {
 				console_set_cursor(17, TOP_ROW_STATS + 3);
 				console_puts("-------");
 			} else {
-				const uint8_t *dmx_data = dmxreceiver.GetDmxCurrentData();
-				const struct TDmxData *dmx_statistics = reinterpret_cast<const struct TDmxData*>(dmx_data);
+				const auto *dmx_data = dmxreceiver.GetDmxCurrentData();
+				const auto *dmx_statistics = reinterpret_cast<const struct TDmxData*>(dmx_data);
 
 				nUpdatesPerSecondeMin = std::min(dmx_updates_per_seconde, nUpdatesPerSecondeMin);
 				nUpdatesPerSecondeMax = std::max(dmx_updates_per_seconde, nUpdatesPerSecondeMax);

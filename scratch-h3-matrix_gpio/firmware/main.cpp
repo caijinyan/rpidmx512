@@ -27,6 +27,9 @@ static const char SOFTWARE_VERSION[] = "0.0";
 #include "rgbpaneldmx.h"
 
 #include "e131bridge.h"
+#include "e131params.h"
+#include "storee131.h"
+
 #include "reboot.h"
 
 #define COLUMNS 64
@@ -106,7 +109,15 @@ void notmain(void) {
 
 //	matrix.Dump();
 
+	StoreE131 storeE131;
+	E131Params e131params(&storeE131);
+
+	if (e131params.Load()) {
+		e131params.Dump();
+	}
+
 	E131Bridge bridge;
+	e131params.Set(&bridge);
 
 	for (uint32_t i = 0; i < matrix.GetUniverses(); i++) {
 		bridge.SetUniverse(i, E131_OUTPUT_PORT, i + 1);
@@ -118,10 +129,6 @@ void notmain(void) {
 
 	Reboot reboot;
 	hw.SetRebootHandler(&reboot);
-
-	/**
-	 *
-	 */
 
 	RemoteConfig remoteConfig(remoteconfig::Node::E131, remoteconfig::Output::RGBPANEL, matrix.GetUniverses());
 
@@ -136,29 +143,23 @@ void notmain(void) {
 	while (spiFlashStore.Flash())
 		;
 
-	/**
-	 *
-	 */
-
-	display.ClearLine(0);
-
+#if 1
+# define UDP_PORT	9999
+	auto nHandle = nw.Begin(UDP_PORT);
+	const auto nToIp = nw.GetBroadcastIp();
 	int nPrevSeconds = 60; // Force initial update
 	uint32_t nUpdatesPrevious = 0;
 	uint32_t nFpsPrevious = 0;
 	uint32_t nShowCounterPrevious = 0;
+	char buffer[1024];
+#endif
 
 	for (;;) {
 		nw.Run();
+		bridge.Run();
 		remoteConfig.Run();
 		spiFlashStore.Flash();
-		//lb.Run();
-		shell.Run();
-		bridge.Run();
-
-		/*
-		 * Debugging
-		 */
-
+#if 1
 		const auto ltime = time(nullptr);
 		const auto *tm = localtime(&ltime);
 
@@ -175,9 +176,11 @@ void notmain(void) {
 
 			if ((nFpsPrevious != nFps) || (nShowCounterPrevious != nShowCounter)) {
 				nFpsPrevious = nFps;
-				display.Printf(1, "%6u %6u", nFps, nShowUpdates);
+				const auto nLength = snprintf(buffer, sizeof(buffer) - 1, "%6u %6u", nFps, nShowUpdates);
+				nw.SendTo(nHandle, buffer, nLength, nToIp, UDP_PORT);
 			}
 		}
+#endif
 	}
 }
 

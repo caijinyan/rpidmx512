@@ -62,7 +62,7 @@ namespace shell {
 static constexpr auto TABLE_SIZE = sizeof(cmd_table) / sizeof(cmd_table[0]);
 namespace msg {
 static constexpr char CMD_PROMPT[] = "opi> ";
-static constexpr char CMD_NOT_FOUND[] = "Command not found\n";
+static constexpr char CMD_NOT_FOUND[] = "Command not found: ";
 static constexpr char WRONG_ARGUMENTS[] = "Wrong arguments\n";
 }  // namespace msg
 }  // namespace shell
@@ -181,18 +181,20 @@ void Shell::CmdHelp() {
 	uart0_puts("http://www.orangepi-dmx.org/orange-pi-dmx512-rdm/uart0-shell\n");
 }
 
-void Shell::Run() {
-	uint32_t nLength;
-	
+void Shell::Run() {	
 	if (__builtin_expect((!m_bShownPrompt), 1)) {
 		uart0_puts(msg::CMD_PROMPT);
 		m_bShownPrompt = true;
 	}
+	
+	uint32_t nLength;
 
 	if (__builtin_expect((ReadLine(nLength) == nullptr), 1)) {
 		return;
 	}
 	
+	uart0_puts("\n");
+
 	m_bShownPrompt = false; // next time round, we show the prompt.
 
 	uint32_t nOffset;
@@ -200,6 +202,8 @@ void Shell::Run() {
 
 	if ((nOffset = ValidateCmd(nLength, nCmdIndex)) == 0) {
 		uart0_puts(msg::CMD_NOT_FOUND);
+		uart0_puts(p);
+		uart0_puts("\n");
 		return;
 	}
 

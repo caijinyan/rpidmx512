@@ -1,0 +1,9 @@
+DEFINES = PORT=EMBEDDED SD_EXFAT_SUPPORT DISABLE_RTC
+#
+LIBS = 
+#
+SRCDIR = firmware jbi_22/code lib lib/h3
+
+include ../h3-firmware-template/Rules.mk
+
+prerequisites:

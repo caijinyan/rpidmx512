@@ -33,6 +33,7 @@
 #include "rgbpanel.h"
 
 #include "h3_spi.h"
+#include "h3_i2c.h"
 #include "h3_gpio.h"
 #include "board/h3_opi_zero.h"
 #include "h3_cpu.h"
@@ -164,7 +165,7 @@ void RgbPanel::Start() {
 	m_bIsStarted = true;
 
 	/**
-	 * Currently it is not possible stop/starting the additionals core(s)
+	 * Currently it is not possible stop/starting the additional core(s)
 	 * We need to keep the additional core(s) running.
 	 * Starting an already running core can crash the system.
 	 */
@@ -172,6 +173,12 @@ void RgbPanel::Start() {
 	if (s_bIsCoreRunning) {
 		return;
 	}
+
+	h3_i2c_end();
+
+	// DEBUG UART
+	h3_gpio_fsel(4, GPIO_FSEL_DISABLE);
+	h3_gpio_fsel(5, GPIO_FSEL_DISABLE);
 
 	puts("smp_start_core(1, core1_task)");
 	smp_start_core(1, core1_task);

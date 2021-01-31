@@ -25,15 +25,22 @@
 #include "jamstapl.h"
 #include "jamstaplutil.h"
 
+#include "debug.h"
+
 static const char SOFTWARE_VERSION[] = "0.0";
 
+extern uint32_t PIXEL8X4_PROGRAM;
+
+
 extern "C" {
+
+extern uint32_t getPIXEL8X4_SIZE();
 
 void notmain(void) {
 	Hardware hw;
 	NetworkH3emac nw;
 	LedBlink lb;
-	Display display;
+	Display display(0,4);
 	FirmwareVersion fw(SOFTWARE_VERSION, __DATE__, __TIME__);
 
 	SpiFlashInstall spiFlashInstall;
@@ -64,19 +71,17 @@ void notmain(void) {
 	while (spiFlashStore.Flash())
 		;
 
-	static constexpr char IDCODE[] = "idcode.jbc";
+	JamSTAPL jbc(reinterpret_cast<uint8_t*>(&PIXEL8X4_PROGRAM), getPIXEL8X4_SIZE());
+	jbc.SetJamSTAPLDisplay(&networkHandlerOled);
+	jbc.CheckCRC(true);
+	jbc.PrintInfo();
+	jbc.CheckIdCode();
 
-	auto nFileSize = JamSTAPLUtil::GetFileSize(IDCODE);
-	if (nFileSize != 0) {
-		auto *pBuffer = new unsigned char[nFileSize];
-		if (JamSTAPLUtil::LoadFile(IDCODE, reinterpret_cast<char*>(pBuffer), nFileSize) >= 0) {
-			JamSTAPL jbc(pBuffer, nFileSize);
-			jbc.CheckCRC(true);
-			jbc.PrintInfo();
-			jbc.ReadIdCode();
-			printf("%s\n%s\n", jbc.GetResultString(), jbc.GetExitCodeString());
+	if (jbc.GetExitCode() == 0) {
+		jbc.ReadUsercode();
+		if (jbc.GetExitCode() == 0) {
+			jbc.Program();
 		}
-		delete[] pBuffer;
 	}
 
 	for (;;) {

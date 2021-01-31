@@ -31,8 +31,9 @@
 
 #include "network.h"
 #include "ntpclient.h"
+#include "jamstapl.h"
 
-class NetworkHandlerOled: public NetworkDisplay, public NtpClientDisplay {
+class NetworkHandlerOled: public NetworkDisplay, public NtpClientDisplay, public JamSTAPLDisplay {
 public:
 	NetworkHandlerOled(void) {
 		s_pThis = this;
@@ -89,6 +90,16 @@ public:
 			Display::Get()->TextStatus("Error: NTP", Display7SegmentMessage::ERROR_NTP);
 			return;
 		}
+	}
+
+	// JamSTAPL
+	void JamShowInfo(const char *pInfo) {
+		Display::Get()->ClearLine(1);
+		Display::Get()->Printf(1, pInfo);
+	}
+
+	void JamShowStatus(const char *pStatus) {
+		Display::Get()->TextStatus(pStatus);
 	}
 
 	static NetworkHandlerOled *Get(void) {

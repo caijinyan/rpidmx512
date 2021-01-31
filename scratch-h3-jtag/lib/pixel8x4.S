@@ -1,8 +1,8 @@
 /**
- * @file jamstapl.cpp
+ * @file pixel8x4.S
  *
  */
-/* Copyright (C) 2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2021 by Arjan van Vught mailto:info@raspberrypi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,12 +23,22 @@
  * THE SOFTWARE.
  */
 
-#include "jamstapl.h"
+ .macro FUNC name
+.text
+.code 32
+.global \name
+\name:
+.endm
 
-extern "C" {
-void jbi_jtag_io_init(void);
-}
+.align 4
+.section .rodata
 
-void JamSTAPL::PlatformInit() {
-	jbi_jtag_io_init();
-}
+.global PIXEL8X4_PROGRAM
+
+PIXEL8X4_PROGRAM:
+	.incbin "../jbc/PIXEL8x4.jbc"
+PIXEL8X4_SIZE = . - PIXEL8X4_PROGRAM
+
+FUNC getPIXEL8X4_SIZE
+mov r0, #PIXEL8X4_SIZE
+bx lr

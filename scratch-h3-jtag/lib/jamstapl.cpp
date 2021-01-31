@@ -1,6 +1,26 @@
-/*
- * jamstapl.cpp
+/**
+ * @file jamstapl.cpp
  *
+ */
+/* Copyright (C) 2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 #undef NDEBUG
@@ -49,22 +69,32 @@ static constexpr auto MAX_ERROR_CODE = ((sizeof(error_text)/sizeof(error_text[0]
 
 void JamSTAPL::ReadIdCode() {
 	Execute("READ_IDCODE");
+	DisplayStatus("IDCODE");
 }
 
 void JamSTAPL::ReadUsercode() {
 	Execute("READ_USERCODE");
+	DisplayStatus("USERCODE");
+}
+
+void JamSTAPL::CheckIdCode() {
+	Execute("CHECK_IDCODE");
+	DisplayStatus("IDCODE");
 }
 
 void JamSTAPL::Erase() {
-	Execute("ERASE");;
+	Execute("ERASE");
+	DisplayStatus("ERASE");
 }
 
 void JamSTAPL::Verify() {
-	Execute("VERIFY");;
+	Execute("VERIFY");
+	DisplayStatus("VERIFY");
 }
 
 void JamSTAPL::Program() {
 	Execute("PROGRAM");
+	DisplayStatus("PROGRAM");
 }
 
 const char *JamSTAPL::GetResultString() const {
@@ -188,4 +218,12 @@ void JamSTAPL::Execute(const char *pAction) {
 			&m_nErrorAddress,
 			&m_nExitCode,
 			&m_FormatVersion);
+}
+
+void JamSTAPL::DisplayStatus(const char *pAction) {
+	if (m_pJamSTAPLDisplay != nullptr) {
+		char aStatus[21];
+		snprintf(aStatus, sizeof(aStatus) - 1, "%s: %s", pAction, m_nExitCode == 0 ? "Success" : "Failed");
+		m_pJamSTAPLDisplay->JamShowStatus(aStatus);
+	}
 }

@@ -3,7 +3,7 @@
  *
  */
 /* Copyright (C) 2020 by hippy mailto:dmxout@gmail.com
- * Copyright (C) 2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
+ * Copyright (C) 2020-2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -63,7 +63,7 @@ static constexpr auto TABLE_SIZE = sizeof(cmd_table) / sizeof(cmd_table[0]);
 namespace msg {
 static constexpr char CMD_PROMPT[] = "opi> ";
 static constexpr char CMD_NOT_FOUND[] = "Command not found: ";
-static constexpr char WRONG_ARGUMENTS[] = "Wrong arguments\n";
+static constexpr char CMD_WRONG_ARGUMENTS[] = "Wrong arguments\n";
 }  // namespace msg
 }  // namespace shell
 
@@ -201,16 +201,14 @@ void Shell::Run() {
 	CmdIndex nCmdIndex;
 
 	if ((nOffset = ValidateCmd(nLength, nCmdIndex)) == 0) {
-		uart0_puts(msg::CMD_NOT_FOUND);
-		uart0_puts(p);
-		uart0_puts("\n");
+		uart0_printf("%s %s\n", msg::CMD_NOT_FOUND, m_Buffer);
 		return;
 	}
 
 	ValidateArg(nOffset, nLength);
 
 	if (m_Argc != cmd_table[static_cast<uint32_t>(nCmdIndex)].nArgc) {
-		uart0_puts(msg::WRONG_ARGUMENTS);
+		uart0_puts(msg::CMD_WRONG_ARGUMENTS);
 		return;
 	}
 
@@ -248,9 +246,6 @@ void Shell::Run() {
 			break;
 		case CmdIndex::NTP:
 			CmdNtp();
-			break;
-		case CmdIndex::PTP:
-			CmdPtp();
 			break;
 		case CmdIndex::GPS:
 			CmdGps();

@@ -2,7 +2,7 @@
  * @file rdmnetllrponly.cpp
  *
  */
-/* Copyright (C) 2019-2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2019-2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,12 +43,6 @@ static constexpr auto LABEL_LENGTH = sizeof(LABEL) - 1;
 RDMNetLLRPOnly::RDMNetLLRPOnly(const char *pLabel):
 	m_pLabel(const_cast<char*>(pLabel)),
 	m_RDMNetDevice(new RDMPersonality(LABEL, LightSet::Get()->GetDmxFootprint())) {
-	DEBUG_ENTRY
-
-	DEBUG_EXIT
-}
-
-RDMNetLLRPOnly::~RDMNetLLRPOnly() {
 	DEBUG_ENTRY
 
 	DEBUG_EXIT

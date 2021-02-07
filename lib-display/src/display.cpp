@@ -337,6 +337,23 @@ void Display::TextStatus(const char *pText, uint8_t nValue7Segment, bool bHex) {
 	m_Display7Segment.Status(nValue7Segment, bHex);
 }
 
+void Display::SetContrast(uint8_t nContrast) {
+	if (m_LcdDisplay == nullptr) {
+		return;
+	}
+
+	m_LcdDisplay->SetContrast(nContrast);
+}
+
+void Display::PrintInfo() {
+	if (m_LcdDisplay == nullptr) {
+		puts("No display found");
+		return;
+	}
+
+	m_LcdDisplay->PrintInfo();
+}
+
 #if !defined(NO_HAL)
 void Display::SetSleep(bool bSleep) {
 	if (m_LcdDisplay == nullptr) {
@@ -364,20 +381,3 @@ void Display::Run() {
 	}
 }
 #endif
-
-void Display::SetContrast(uint8_t nContrast) {
-	if (m_LcdDisplay == nullptr) {
-		return;
-	}
-
-	m_LcdDisplay->SetContrast(nContrast);
-}
-
-void Display::PrintInfo() {
-	if (m_LcdDisplay == nullptr) {
-		puts("No display found");
-		return;
-	}
-
-	m_LcdDisplay->PrintInfo();
-}

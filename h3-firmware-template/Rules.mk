@@ -112,7 +112,7 @@ SOURCE = ./
 FIRMWARE_DIR = ./../h3-firmware-template/
 LINKER = $(FIRMWARE_DIR)memmap
 
-LIBS+=lightset properties display device hal c++ c debug h3 arm
+LIBS+=lightset properties display device hal c++ debug h3 c arm
 
 DEFINES:=$(addprefix -D,$(DEFINES))
 

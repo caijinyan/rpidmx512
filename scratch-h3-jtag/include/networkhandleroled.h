@@ -95,7 +95,7 @@ public:
 	// JamSTAPL
 	void JamShowInfo(const char *pInfo) {
 		Display::Get()->ClearLine(1);
-		Display::Get()->Printf(1, pInfo);
+		Display::Get()->Write(1, pInfo);
 	}
 
 	void JamShowStatus(const char *pStatus) {

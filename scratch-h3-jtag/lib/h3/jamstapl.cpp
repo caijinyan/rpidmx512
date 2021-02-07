@@ -25,10 +25,8 @@
 
 #include "jamstapl.h"
 
-extern "C" {
-void jbi_jtag_io_init(void);
-}
+extern void jbi_jtag_io_init(JamSTAPL *pJamSTAPL, bool bVerbose);
 
-void JamSTAPL::PlatformInit() {
-	jbi_jtag_io_init();
+void JamSTAPL::PlatformInit(bool bVerbose) {
+	jbi_jtag_io_init(this, bVerbose);
 }

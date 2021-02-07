@@ -42,9 +42,8 @@ struct JamSTAPLDisplay {
 
 class JamSTAPL {
 public:
-	JamSTAPL(PROGRAM_PTR pProgram, long nProgramSize) :
-			m_pProgram(pProgram), m_nProgramSize(nProgramSize) {
-		PlatformInit();
+	JamSTAPL(PROGRAM_PTR pProgram, long nProgramSize, bool bVerbose = false) : m_pProgram(pProgram), m_nProgramSize(nProgramSize) {
+		PlatformInit(bVerbose);
 	}
 
 	JBI_RETURN_TYPE CheckCRC(bool bVerbose = false);
@@ -71,12 +70,31 @@ public:
 
 	const char *GetExitCodeString() const;
 
+	void SetMessage(const char *pMessage) {
+		if (m_pJamSTAPLDisplay != nullptr) {
+			m_pJamSTAPLDisplay->JamShowInfo(pMessage);
+		}
+	}
+
+	void SetExportInteger(char *pKey, long nValue) {
+		m_ExportInteger.pKey = pKey;
+		m_ExportInteger.nValue = nValue;
+	}
+
+	const char *GetExportIntegerKey() const {
+		return m_ExportInteger.pKey;
+	}
+
+	long GetExportIntegerInt() const {
+		return m_ExportInteger.nValue;
+	}
+
 	void SetJamSTAPLDisplay(JamSTAPLDisplay *pJamSTAPLDisplay) {
 		m_pJamSTAPLDisplay = pJamSTAPLDisplay;
 	}
 
 private:
-	void PlatformInit();
+	void PlatformInit(bool bVerbose);
 	void Execute(const char *pAction);
 	void DisplayStatus(const char *pAction);
 
@@ -88,6 +106,12 @@ private:
 	int m_nExitCode { -1 };
 	int m_FormatVersion { 2 };
 	JBI_RETURN_TYPE m_nExecResult { JBIC_ACTION_NOT_FOUND };
+
+	struct ExportInteger {
+		char *pKey;
+		long nValue;
+	};
+	ExportInteger m_ExportInteger;
 
 	JamSTAPLDisplay *m_pJamSTAPLDisplay{ nullptr };
 };

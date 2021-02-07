@@ -71,7 +71,7 @@ void notmain(void) {
 	while (spiFlashStore.Flash())
 		;
 
-	JamSTAPL jbc(reinterpret_cast<uint8_t*>(&PIXEL8X4_PROGRAM), getPIXEL8X4_SIZE());
+	JamSTAPL jbc(reinterpret_cast<uint8_t*>(&PIXEL8X4_PROGRAM), getPIXEL8X4_SIZE(), true);
 	jbc.SetJamSTAPLDisplay(&networkHandlerOled);
 	jbc.CheckCRC(true);
 	jbc.PrintInfo();
@@ -80,6 +80,7 @@ void notmain(void) {
 	if (jbc.GetExitCode() == 0) {
 		jbc.ReadUsercode();
 		if (jbc.GetExitCode() == 0) {
+			display.Printf(2, "%s: %X", jbc.GetExportIntegerKey(), jbc.GetExportIntegerInt());
 			jbc.Program();
 		}
 	}

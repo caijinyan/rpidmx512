@@ -31,15 +31,17 @@
 #include "h3_gpio.h"
 #include "board/h3_opi_zero.h"
 
+#include "jamstapl.h"
+
 #define GPIO_TDO		GPIO_EXT_12
 #define GPIO_TDI		GPIO_EXT_16
 #define GPIO_TCK		GPIO_EXT_18
 #define GPIO_TMS		GPIO_EXT_22
 
-extern void uart0_puts(char *s);
-extern int uart0_printf(const char* fmt, ...);
-
-static bool verbose = false;
+extern "C" {
+ void uart0_puts(const char *s);
+ int uart0_printf(const char* fmt, ...);
+}
 
 void *jbi_malloc(unsigned int size) {
 	return malloc(size);
@@ -58,7 +60,13 @@ void jbi_free(void *ptr) {
 *	jbi_delay()
 */
 
-void jbi_jtag_io_init(void) {
+static JamSTAPL *s_pJamSTAPL = nullptr;
+static bool s_bVerbose = false;
+
+void jbi_jtag_io_init(JamSTAPL *pJamSTAPL, bool bVerbose) {
+	s_pJamSTAPL = pJamSTAPL;
+	s_bVerbose = bVerbose;
+
 	h3_gpio_fsel(GPIO_TDO, GPIO_FSEL_INPUT);
 	h3_gpio_fsel(GPIO_TDI, GPIO_FSEL_OUTPUT);
 	h3_gpio_fsel(GPIO_TCK, GPIO_FSEL_OUTPUT);
@@ -91,8 +99,12 @@ int jbi_jtag_io(int tms, int tdi, int read_tdo) {
 }
 
 void jbi_message(char *message_text) {
-	uart0_puts(message_text);
-	uart0_puts("\n");
+	s_pJamSTAPL->SetMessage(message_text);
+
+	if (s_bVerbose) {
+		uart0_puts(message_text);
+		uart0_puts("\n");
+	}
 }
 
 void jbi_delay(long microseconds) {
@@ -104,7 +116,9 @@ void jbi_delay(long microseconds) {
 */
 
 void jbi_export_integer(char *key, long value) {
-	if (verbose) {
+	s_pJamSTAPL->SetExportInteger(key, value);
+
+	if (s_bVerbose) {
 		uart0_printf("Export: key = \"%s\", value = %p\n", key, value);
 	}
 }
@@ -116,12 +130,12 @@ static char conv_to_hex(unsigned long value) {
 	char c;
 
 	if (value > 9) {
-		c = (char) (value + ('A' - 10));
+		c = static_cast<char>(value + ('A' - 10));
 	} else {
-		c = (char) (value + '0');
+		c = static_cast<char>(value + '0');
 	}
 
-	return (c);
+	return c;
 }
 
 void jbi_export_boolean_array(char *key, unsigned char *data, long count) {
@@ -129,7 +143,7 @@ void jbi_export_boolean_array(char *key, unsigned char *data, long count) {
 	long i, offset;
 	unsigned long size, line, lines, linebits, value, j, k;
 
-	if (verbose) {
+	if (s_bVerbose) {
 		if (count > HEX_LINE_BITS) {
 			uart0_printf("Export: key = \"%s\", %ld bits, value = HEX\n", key, count);
 			lines = (count + (HEX_LINE_BITS - 1)) / HEX_LINE_BITS;

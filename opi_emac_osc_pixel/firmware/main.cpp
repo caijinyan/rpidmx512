@@ -2,7 +2,7 @@
  * @file main.cpp
  *
  */
-/* Copyright (C) 2019-2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2019-2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -164,7 +164,7 @@ void notmain(void) {
 			const uint16_t nLedCount = pWS28xxDmx->GetLEDCount();
 
 			// For the time being, just 1 Universe
-			if (pWS28xxDmx->GetLEDType() == SK6812W) {
+			if (pWS28xxDmx->GetLEDType() == ws28xx::Type::SK6812W) {
 				if (nLedCount > 128) {
 					pWS28xxDmx->SetLEDCount(128);
 				}

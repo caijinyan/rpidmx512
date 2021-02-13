@@ -38,10 +38,9 @@
 
 #include "e131bridge.h"
 #include "e131params.h"
+#include "e131reboot.h"
 #include "storee131.h"
 #include "e131msgconst.h"
-
-#include "reboot.h"
 
 // DMX Output
 #include "dmxparams.h"
@@ -102,7 +101,7 @@ void notmain(void) {
 #endif
 
 	hw.SetLed(hardware::LedStatus::ON);
-	hw.SetRebootHandler(new Reboot);
+	hw.SetRebootHandler(new E131Reboot);
 	lb.SetLedBlinkDisplay(new DisplayHandler);
 
 	display.TextStatus(NetworkConst::MSG_NETWORK_INIT, Display7SegmentMessage::INFO_NETWORK_INIT, CONSOLE_YELLOW);

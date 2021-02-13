@@ -2,7 +2,7 @@
  * @file ws28xxdisplaymatrix.h
  *
  */
-/* Copyright (C) 2019-2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2019-2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,7 @@ public:
 	WS28xxDisplayMatrix(uint32_t nColumns, uint32_t nRows);
 	~WS28xxDisplayMatrix();
 
-	void Init(TWS28XXType tLedType = WS2812B, TRGBMapping tRGBMapping = RGB_MAPPING_UNDEFINED);
+	void Init(ws28xx::Type tLedType = ws28xx::Type::WS2812B, TRGBMapping tRGBMapping = RGB_MAPPING_UNDEFINED);
 
 	void PutChar(char nChar, uint8_t nRed = 0x10, uint8_t nGreen = 0x10, uint8_t nBlue = 0x10);
 	void PutString(const char *pString, uint8_t nRed = 0x10, uint8_t nGreen = 0x10, uint8_t nBlue = 0x10);

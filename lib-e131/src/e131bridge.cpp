@@ -843,7 +843,6 @@ void E131Bridge::Run() {
 				if ((m_nCurrentPacketMillis - m_nPreviousPacketMillis) >= 1000) {
 					LedBlink::Get()->SetMode(ledblink::Mode::NORMAL);
 					m_State.bIsReceivingDmx = false;
-					DEBUG_PUTS("");
 				}
 			}
 		}

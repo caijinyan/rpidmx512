@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 2019-2020 by hippy mailto:dmxout@gmail.com
- * Copyright (C) 2019-2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
+ * Copyright (C) 2019-2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -97,7 +97,7 @@ LtcDisplayRgb::~LtcDisplayRgb() {
 	DEBUG_EXIT
 }
 
-void LtcDisplayRgb::Init(TWS28XXType tLedType) {
+void LtcDisplayRgb::Init(ws28xx::Type tLedType) {
 	DEBUG_ENTRY
 
 	m_tLedType = tLedType;

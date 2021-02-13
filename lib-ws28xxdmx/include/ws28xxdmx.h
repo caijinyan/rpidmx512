@@ -45,8 +45,8 @@ public:
 
 	void Blackout(bool bBlackout);
 
-	virtual void SetLEDType(TWS28XXType);
-	TWS28XXType GetLEDType() {
+	virtual void SetLEDType(ws28xx::Type type);
+	ws28xx::Type GetLEDType() {
 		return m_tLedType;
 	}
 
@@ -106,31 +106,31 @@ private:
 	void UpdateMembers();
 
 protected:
-	TWS28XXType m_tLedType{WS2812B};
+	ws28xx::Type m_tLedType { ws28xx::Type::WS2812B };
 
-	TRGBMapping m_tRGBMapping{RGB_MAPPING_UNDEFINED};
-	uint8_t m_nLowCode{0};
-	uint8_t m_nHighCode{0};
+	TRGBMapping m_tRGBMapping { RGB_MAPPING_UNDEFINED };
+	uint8_t m_nLowCode { 0 };
+	uint8_t m_nHighCode { 0 };
 
-	uint16_t m_nLedCount{170};
-	uint16_t m_nDmxStartAddress{DMX_START_ADDRESS_DEFAULT};
-	uint16_t m_nDmxFootprint;
+	uint16_t m_nLedCount { 170 };
+	uint16_t m_nDmxStartAddress { DMX_START_ADDRESS_DEFAULT };
+	uint16_t m_nDmxFootprint { 170 * 3 };
 
-	WS28xx* m_pWS28xx{nullptr};
-	bool m_bIsStarted{false};
-	bool m_bBlackout{false};
+	WS28xx *m_pWS28xx { nullptr };
+	bool m_bIsStarted { false };
+	bool m_bBlackout { false };
 
-	WS28xxDmxStore *m_pWS28xxDmxStore{nullptr};
+	WS28xxDmxStore *m_pWS28xxDmxStore { nullptr };
 
 private:
-	uint32_t m_nClockSpeedHz{0};
-	uint8_t m_nGlobalBrightness{0xFF};
-	uint32_t m_nBeginIndexPortId1{170};
-	uint32_t m_nBeginIndexPortId2{340};
-	uint32_t m_nBeginIndexPortId3{510};
-	uint32_t m_nChannelsPerLed{3};
+	uint32_t m_nClockSpeedHz { 0 };
+	uint8_t m_nGlobalBrightness { 0xFF };
+	uint32_t m_nBeginIndexPortId1 { 170 };
+	uint32_t m_nBeginIndexPortId2 { 340 };
+	uint32_t m_nBeginIndexPortId3 { 510 };
+	uint32_t m_nChannelsPerLed { 3 };
 
-	uint32_t m_nPortIdLast{3};
+	uint32_t m_nPortIdLast { 3 };
 };
 
 #endif /* WS28XXDMX_H_ */

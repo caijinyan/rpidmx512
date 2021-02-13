@@ -2,7 +2,7 @@
  * @file main.cpp
  *
  */
-/* Copyright (C) 2018-2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2018-2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -170,7 +170,7 @@ void notmain(void) {
 
 			const auto nLedCount = pWS28xxDmx->GetLEDCount();
 
-			if (pWS28xxDmx->GetLEDType() == SK6812W) {
+			if (pWS28xxDmx->GetLEDType() == ws28xx::Type::SK6812W) {
 				if (nLedCount > 128) {
 					node.SetDirectUpdate(true);
 					node.SetUniverseSwitch(1, ARTNET_OUTPUT_PORT, nUniverse + 1U);

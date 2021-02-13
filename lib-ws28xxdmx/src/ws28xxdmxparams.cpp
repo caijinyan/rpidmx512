@@ -33,6 +33,7 @@
 #ifndef NDEBUG
 # include <stdio.h>
 #endif
+#include <algorithm>
 #include <cassert>
 
 #include "ws28xxdmxparams.h"
@@ -53,13 +54,15 @@
 
 #include "debug.h"
 
+using namespace ws28xxdmxparams;
+
 WS28xxDmxParams::WS28xxDmxParams(WS28xxDmxParamsStore *pWS28XXStripeParamsStore): m_pWS28xxParamsStore(pWS28XXStripeParamsStore) {
 	m_tWS28xxParams.nSetList = 0;
-	m_tWS28xxParams.tLedType = WS2812B;
+	m_tWS28xxParams.tLedType = ws28xx::Type::WS2812B;
 	m_tWS28xxParams.nLedCount = 170;
 	m_tWS28xxParams.nDmxStartAddress = 1;
 	m_tWS28xxParams.bLedGrouping = false;
-	m_tWS28xxParams.nSpiSpeedHz = spi::speed::ws2801::default_hz;
+	m_tWS28xxParams.nSpiSpeedHz = ws28xx::spi::speed::ws2801::default_hz;
 	m_tWS28xxParams.nGlobalBrightness = 0xFF;
 	m_tWS28xxParams.nActiveOutputs = 1;
 	m_tWS28xxParams.bUseSI5351A = false;
@@ -67,9 +70,11 @@ WS28xxDmxParams::WS28xxDmxParams(WS28xxDmxParamsStore *pWS28XXStripeParamsStore)
 	m_tWS28xxParams.nRgbMapping = RGB_MAPPING_UNDEFINED;
 	m_tWS28xxParams.nLowCode = 0;
 	m_tWS28xxParams.nHighCode = 0;
-}
-
-WS28xxDmxParams::~WS28xxDmxParams() {
+	uint16_t nStartUniverse = 1;
+	for (uint32_t i = 0; i < MAX_OUTPUTS; i++) {
+		m_tWS28xxParams.nStartUniverse[i] = nStartUniverse;
+		nStartUniverse += 4;
+	}
 }
 
 bool WS28xxDmxParams::Load() {
@@ -123,13 +128,13 @@ void WS28xxDmxParams::callbackFunction(const char *pLine) {
 		cBuffer[nLength] = '\0';
 		uint32_t i;
 
-		for (i = 0; i < WS28XX_UNDEFINED; i++) {
+		for (i = 0; i < static_cast<uint32_t>(ws28xx::Type::UNDEFINED); i++) {
 			if (strcasecmp(cBuffer, WS28xxConst::TYPES[i]) == 0) {
 				break;
 			}
 		}
 
-		m_tWS28xxParams.tLedType = static_cast<TWS28XXType>(i);
+		m_tWS28xxParams.tLedType = static_cast<ws28xx::Type>(i);
 		m_tWS28xxParams.nSetList |= WS28xxDmxParamsMask::LED_TYPE;
 
 		return;
@@ -181,6 +186,18 @@ void WS28xxDmxParams::callbackFunction(const char *pLine) {
 		m_tWS28xxParams.nHighCode = nValue8;
 
 		return;
+	}
+
+	for (uint32_t i = 0; i < std::min(static_cast<size_t>(MAX_OUTPUTS), sizeof(LightSetConst::PARAMS_START_UNI_PORT) / sizeof(LightSetConst::PARAMS_START_UNI_PORT[0])); i++) {
+		if (Sscan::Uint16(pLine, LightSetConst::PARAMS_START_UNI_PORT[i], nValue16) == Sscan::OK) {
+			if (nValue16 > 0) {
+				m_tWS28xxParams.nStartUniverse[i] = nValue16;
+				m_tWS28xxParams.nSetList |= (WS28xxDmxParamsMask::START_UNI_PORT_1 << i);
+			} else {
+				m_tWS28xxParams.nStartUniverse[i] = i * 4;
+				m_tWS28xxParams.nSetList &= ~(WS28xxDmxParamsMask::START_UNI_PORT_1 << i);
+			}
+		}
 	}
 
 	if (Sscan::Uint8(pLine, DevicesParamsConst::ACTIVE_OUT, nValue8) == Sscan::OK) {
@@ -256,6 +273,12 @@ void WS28xxDmxParams::Dump() {
 
 	if (isMaskSet(WS28xxDmxParamsMask::LED_COUNT)) {
 		printf(" %s=%d\n", DevicesParamsConst::LED_COUNT, m_tWS28xxParams.nLedCount);
+	}
+
+	for (uint32_t i = 0; i < std::min(static_cast<size_t>(MAX_OUTPUTS), sizeof(LightSetConst::PARAMS_START_UNI_PORT) / sizeof(LightSetConst::PARAMS_START_UNI_PORT[0])); i++) {
+		if (isMaskSet(WS28xxDmxParamsMask::START_UNI_PORT_1 << i)) {
+				printf(" %s=%d\n", LightSetConst::PARAMS_START_UNI_PORT[i], m_tWS28xxParams.nStartUniverse[i]);
+		}
 	}
 
 	if (isMaskSet(WS28xxDmxParamsMask::ACTIVE_OUT)) {

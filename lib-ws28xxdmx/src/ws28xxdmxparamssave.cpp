@@ -2,7 +2,7 @@
  * @file ws28xxparamssave.cpp
  *
  */
-/* Copyright (C) 2019-2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2019-2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <algorithm>
 #include <cassert>
 
 #include "ws28xxdmxparams.h"
@@ -41,6 +42,8 @@
 #include "lightsetconst.h"
 
 #include "debug.h"
+
+using namespace ws28xxdmxparams;
 
 void WS28xxDmxParams::Builder(const struct TWS28xxDmxParams *ptWS28xxParams, char *pBuffer, uint32_t nLength, uint32_t &nSize) {
 	DEBUG_ENTRY
@@ -98,7 +101,11 @@ void WS28xxDmxParams::Builder(const struct TWS28xxDmxParams *ptWS28xxParams, cha
 	builder.Add(DevicesParamsConst::GLOBAL_BRIGHTNESS, m_tWS28xxParams.nGlobalBrightness, isMaskSet(WS28xxDmxParamsMask::GLOBAL_BRIGHTNESS));
 
 	builder.AddComment("Multi port");
+	for (uint32_t i = 0; i < std::min(static_cast<size_t>(MAX_OUTPUTS), sizeof(LightSetConst::PARAMS_START_UNI_PORT) / sizeof(LightSetConst::PARAMS_START_UNI_PORT[0])); i++) {
+		builder.Add(LightSetConst::PARAMS_START_UNI_PORT[i],m_tWS28xxParams.nStartUniverse[i], isMaskSet(WS28xxDmxParamsMask::START_UNI_PORT_1 << i));
+	}
 	builder.Add(DevicesParamsConst::ACTIVE_OUT, m_tWS28xxParams.nActiveOutputs, isMaskSet(WS28xxDmxParamsMask::ACTIVE_OUT));
+	builder.AddComment("4x only");
 	builder.Add(DevicesParamsConst::USE_SI5351A, m_tWS28xxParams.bUseSI5351A, isMaskSet(WS28xxDmxParamsMask::USE_SI5351A));
 
 	nSize = builder.GetSize();

@@ -2,7 +2,7 @@
  * @file ws28xxmulti.h
  *
  */
-/* Copyright (C) 2019-2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2019-2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,24 +36,22 @@
 # include "h3/ws28xxdma.h"
 #endif
 
-enum WS28xxMultiBoard {
-	WS28XXMULTI_BOARD_4X,
-	WS28XXMULTI_BOARD_8X,
-	WS28XXMULTI_BOARD_UNKNOWN
+namespace ws28xxmulti {
+enum class Board {
+	X4,
+	X8,
+	UNKNOWN
 };
-
-enum WS28xxMultiActivePorts {
-	WS28XXMULTI_ACTIVE_PORTS_MAX = 4
-};
+}  // namespace ws28xxmulti
 
 class WS28xxMulti {
 public:
 	WS28xxMulti();
 	~WS28xxMulti();
 
-	void Initialize(TWS28XXType tWS28xxType, uint16_t nLedCount, TRGBMapping tRGBMapping = RGB_MAPPING_UNDEFINED, uint8_t nT0H = 0, uint8_t nT1H = 0, bool bUseSI5351A = false);
+	void Initialize(ws28xx::Type tWS28xxType, uint16_t nLedCount, TRGBMapping tRGBMapping = RGB_MAPPING_UNDEFINED, uint8_t nT0H = 0, uint8_t nT1H = 0, bool bUseSI5351A = false);
 
-	TWS28XXType GetLEDType() const {
+	ws28xx::Type GetLEDType() const {
 		return m_tWS28xxType;
 	}
 
@@ -73,19 +71,19 @@ public:
 		return m_nLedCount;
 	}
 
-	WS28xxMultiBoard GetBoard() const {
+	ws28xxmulti::Board GetBoard() const {
 		return m_tBoard;
 	}
 
 	void SetLED(uint8_t nPort, uint16_t nLedIndex, uint8_t nRed, uint8_t nGreen, uint8_t nBlue) {
-		if (m_tBoard == WS28XXMULTI_BOARD_8X) {
+		if (m_tBoard == ws28xxmulti::Board::X8) {
 			SetLED8x(nPort, nLedIndex, nRed, nGreen, nBlue);
 		} else {
 			SetLED4x(nPort, nLedIndex, nRed, nGreen, nBlue);
 		}
 	}
 	void SetLED(uint8_t nPort, uint16_t nLedIndex, uint8_t nRed, uint8_t nGreen, uint8_t nBlue, uint8_t nWhite) {
-		if (m_tBoard == WS28XXMULTI_BOARD_8X) {
+		if (m_tBoard == ws28xxmulti::Board::X8) {
 			SetLED8x(nPort, nLedIndex, nRed, nGreen, nBlue, nWhite);
 		} else {
 			SetLED4x(nPort, nLedIndex, nRed, nGreen, nBlue, nWhite);
@@ -94,7 +92,7 @@ public:
 
 #if defined (H3)
 	bool IsUpdating() {
-		if (m_tBoard == WS28XXMULTI_BOARD_8X) {
+		if (m_tBoard == ws28xxmulti::Board::X8) {
 			return h3_spi_dma_tx_is_active();  // returns TRUE while DMA operation is active
 		} else {
 			return false;
@@ -128,17 +126,17 @@ private:
 	void SetLED8x(uint8_t nPort, uint16_t nLedIndex, uint8_t nRed, uint8_t nGreen, uint8_t nBlue, uint8_t nWhite);
 
 private:
-	WS28xxMultiBoard m_tBoard{WS28XXMULTI_BOARD_4X};
-	TWS28XXType m_tWS28xxType{WS2812B};
-	uint16_t m_nLedCount{170};
-	TRGBMapping m_tRGBMapping{RGB_MAPPING_UNDEFINED};
-	uint8_t m_nLowCode{0};
-	uint8_t m_nHighCode{0};
-	uint32_t m_nBufSize{0};
-	uint32_t *m_pBuffer4x{nullptr};
-	uint32_t *m_pBlackoutBuffer4x{nullptr};
-	uint8_t *m_pBuffer8x{nullptr};
-	uint8_t *m_pBlackoutBuffer8x{nullptr};
+	ws28xxmulti::Board m_tBoard { ws28xxmulti::Board::X4 };
+	ws28xx::Type m_tWS28xxType { ws28xx::Type::WS2812B };
+	uint16_t m_nLedCount { 170 };
+	TRGBMapping m_tRGBMapping { RGB_MAPPING_UNDEFINED };
+	uint8_t m_nLowCode { 0 };
+	uint8_t m_nHighCode { 0 };
+	uint32_t m_nBufSize { 0 };
+	uint32_t *m_pBuffer4x { nullptr };
+	uint32_t *m_pBlackoutBuffer4x { nullptr };
+	uint8_t *m_pBuffer8x { nullptr };
+	uint8_t *m_pBlackoutBuffer8x { nullptr };
 };
 
 #endif /* WS28XXMULTI_H_ */

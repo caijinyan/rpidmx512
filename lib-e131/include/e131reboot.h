@@ -1,8 +1,8 @@
 /**
- * @file reboot.h
+ * @file e131reboot.h
  *
  */
-/* Copyright (C) 2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2020-2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,50 +23,23 @@
  * THE SOFTWARE.
  */
 
-#ifndef REBOOT_H_
-#define REBOOT_H_
+#ifndef E131REBOOT_H_
+#define E131REBOOT_H_
+
+#include "hardware.h"
 
 #include "e131bridge.h"
-#include "artnetcontroller.h"
 
-#include "remoteconfig.h"
-#include "display.h"
-
-#include "network.h"
-
-#include "debug.h"
-
-class Reboot: public RebootHandler {
+class E131Reboot: public RebootHandler {
 public:
-	Reboot(void) {
+	E131Reboot(void) {
 	}
-	~Reboot(void) {
+	~E131Reboot(void) {
 	}
 
 	void Run(void) {
-		DEBUG_ENTRY
-
-		E131Bridge::Get() -> Stop();
-		ArtNetController::Get()->Stop();
-
-		if (!RemoteConfig::Get()->IsReboot()) {
-			DEBUG_PUTS("");
-
-			Display::Get()->SetSleep(false);
-
-			while (SpiFlashStore::Get()->Flash())
-				;
-
-			Network::Get()->Shutdown();
-
-			printf("Rebooting ...\n");
-
-			Display::Get()->Cls();
-			Display::Get()->TextStatus("Rebooting ...",	Display7SegmentMessage::INFO_REBOOTING);
-		}
-
-		DEBUG_EXIT
+		E131Bridge::Get()->Stop();
 	}
 };
 
-#endif /* REBOOT_H_ */
+#endif /* E131REBOOT_H_ */

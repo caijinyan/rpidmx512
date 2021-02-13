@@ -40,7 +40,9 @@
 
 #include "lightset.h"
 
-WS28xxDmx::WS28xxDmx() : m_nDmxFootprint(170 * 3) {
+using namespace ws28xx;
+
+WS28xxDmx::WS28xxDmx() {
 	UpdateMembers();
 }
 
@@ -141,7 +143,7 @@ void WS28xxDmx::SetData(uint8_t nPortId, const uint8_t *pData, uint16_t nLength)
 
 	for (uint32_t j = beginIndex; j < endIndex; j++) {
 		__builtin_prefetch(&pData[i]);
-		if (m_tLedType == SK6812W) {
+		if (m_tLedType == Type::SK6812W) {
 			if (i + 3 > nLength) {
 				break;
 			}
@@ -161,10 +163,10 @@ void WS28xxDmx::SetData(uint8_t nPortId, const uint8_t *pData, uint16_t nLength)
 	}
 }
 
-void WS28xxDmx::SetLEDType(TWS28XXType type) {
+void WS28xxDmx::SetLEDType(Type type) {
 	m_tLedType = type;
 
-	if (type == SK6812W) {
+	if (type == Type::SK6812W) {
 		m_nBeginIndexPortId1 = 128;
 		m_nBeginIndexPortId2 = 256;
 		m_nBeginIndexPortId3 = 384;
@@ -240,7 +242,7 @@ bool WS28xxDmx::GetSlotInfo(uint16_t nSlotOffset, struct TLightSetSlotInfo& tSlo
 		return false;
 	}
 
-	if (m_tLedType == SK6812W) {
+	if (m_tLedType == Type::SK6812W) {
 		nIndex = MOD(nSlotOffset, 4);
 	} else {
 		nIndex = MOD(nSlotOffset, 3);

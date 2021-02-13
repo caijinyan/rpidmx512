@@ -2,7 +2,7 @@
  * @file ws28xxdmxmulti.h
  *
  */
-/* Copyright (C) 2019-2020 by Arjan van Vught mailto:info@orangepi-dmx.nl
+/* Copyright (C) 2019-2021 by Arjan van Vught mailto:info@orangepi-dmx.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,14 +34,16 @@
 
 #include "rgbmapping.h"
 
-enum TWS28xxDmxMultiSrc {
-	WS28XXDMXMULTI_SRC_ARTNET,
-	WS28XXDMXMULTI_SRC_E131
+namespace ws28xxdmxmulti {
+enum class Source {
+	ARTNET,
+	E131
 };
+}  // namespace ws28xxdmxmulti
 
 class WS28xxDmxMulti final: public LightSet {
 public:
-	WS28xxDmxMulti(TWS28xxDmxMultiSrc tSrc);
+	WS28xxDmxMulti(ws28xxdmxmulti::Source tSrc);
 	~WS28xxDmxMulti() override;
 
 	void Initialize();
@@ -53,8 +55,8 @@ public:
 
 	void Blackout(bool bBlackout);
 
-	void SetLEDType(TWS28XXType tWS28xxMultiType);
-	TWS28XXType GetLEDType() {
+	void SetLEDType(ws28xx::Type tWS28xxMultiType);
+	ws28xx::Type GetLEDType() {
 		if (m_pLEDStripe != nullptr) {
 			return m_pLEDStripe->GetLEDType();
 		}
@@ -94,11 +96,11 @@ public:
 		return m_bUseSI5351A;
 	}
 
-	WS28xxMultiBoard GetBoard() {
+	ws28xxmulti::Board GetBoard() {
 		if (m_pLEDStripe != nullptr) {
 			return m_pLEDStripe->GetBoard();
 		}
-		return WS28XXMULTI_BOARD_UNKNOWN;
+		return ws28xxmulti::Board::UNKNOWN;
 	}
 
 	void Print() override;
@@ -107,8 +109,8 @@ private:
 	void UpdateMembers();
 
 private:
-	TWS28xxDmxMultiSrc m_tSrc;
-	TWS28XXType m_tLedType;
+	ws28xxdmxmulti::Source m_tSrc;
+	ws28xx::Type m_tLedType;
 
 	TRGBMapping m_tRGBMapping;
 	uint8_t m_nLowCode;
@@ -119,8 +121,8 @@ private:
 
 	WS28xxMulti *m_pLEDStripe;
 
-	bool m_bIsStarted;
-	bool m_bBlackout;
+	bool m_bIsStarted { false };
+	bool m_bBlackout { false };
 
 	uint32_t m_nUniverses;
 
@@ -130,7 +132,7 @@ private:
 	uint32_t m_nChannelsPerLed;
 
 	uint32_t m_nPortIdLast;
-	bool m_bUseSI5351A;
+	bool m_bUseSI5351A { false };
 };
 
 #endif /* WS28XXDMXMULTI_H_ */

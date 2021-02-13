@@ -53,7 +53,7 @@ public:
 	WS28xxDisplay7Segment();
 	~WS28xxDisplay7Segment();
 
-	void Init(TWS28XXType tLedType = WS2812B, TRGBMapping tRGBMapping = RGB_MAPPING_UNDEFINED);
+	void Init(ws28xx::Type tLedType = ws28xx::Type::WS2812B, TRGBMapping tRGBMapping = RGB_MAPPING_UNDEFINED);
 
 	void WriteChar(char nChar, uint8_t nPos, uint8_t nRed, uint8_t nGreen, uint8_t nBlue);
 	void WriteColon(char nChar, uint8_t nPos, uint8_t nRed, uint8_t nGreen, uint8_t nBlue);
